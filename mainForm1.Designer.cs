@@ -111,6 +111,16 @@ namespace Lumi_Uploader_for_TinySafeBoot {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Point similar to {X=421,Y=17}.
+        /// </summary>
+        public static System.Drawing.Point ofdHexFile_TrayLocation {
+            get {
+                object obj = ResourceManager.GetObject("ofdHexFile.TrayLocation", resourceCulture);
+                return ((System.Drawing.Point)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap openToolStripMenuItem_Image {

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Reflection;
+using Lumi_Uploader_for_TinySafeBoot;
 
 // Set version here.
 [assembly: AssemblyVersion("1.1.*")]
@@ -36,6 +37,12 @@ namespace HM_1X_Aid_v01
 
         private SerialPortsExtended serialPorts = new SerialPortsExtended();
 
+        // TinySafeBootloader
+        private tsb tsb = new tsb();
+        tsb.tsbCommands tsbCommands = new tsb.tsbCommands();
+        
+
+        OpenFileDialog hexFile = new OpenFileDialog();
 
         public MainDisplay()
         {
@@ -59,6 +66,8 @@ namespace HM_1X_Aid_v01
 
             // Setup display.
             lblConnectionStatus.BackColor = Color.Red;
+
+            tsb.init(serialPorts, rtbMainDisplay);
         }
 
         private void loadSettings()
@@ -128,6 +137,7 @@ namespace HM_1X_Aid_v01
             // Incoming data is on another thread UI cannot be updated without crashing.
             tempBuffer = data;
             this.BeginInvoke(new SetTextCallback(SetText), new object[] { tempBuffer });
+            tsb.gotData(sender, data);
         }
 
         public void serialSystemUpdate(object sender, string text, int progressBarValue)
@@ -450,18 +460,26 @@ namespace HM_1X_Aid_v01
             clearMainDisplay();
         }
 
-        private void button1_Click_1(object sender, EventArgs e)
-        {
-
-        }
-
         private void btnClearSettings_Click(object sender, EventArgs e)
         {
             resetSettings();
         }
 
-        private void tableLayoutPanel2_Paint(object sender, PaintEventArgs e)
+        private void btnOpenHexFile_Click(object sender, EventArgs e)
         {
+            //ofdHexFile.ShowDialog();
+        }
+
+
+        private void btnWriteHexFile_Click(object sender, EventArgs e)
+        {
+            tsb.execute(tsb.tsbCommands.hello);
+        }
+
+
+        private void btnReadHexFile_Click(object sender, EventArgs e)
+        {
+            
 
         }
     }

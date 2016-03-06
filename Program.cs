@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
 using System.IO.Ports;
-using HM_1X_Aid_v01;
 using System.Globalization;
 
 
@@ -17,7 +16,6 @@ using System.Globalization;
 /// Copyright 2016
 /// 
 /// </summary>
-
 
 
 namespace HM_1X_Aid_v01
@@ -72,6 +70,10 @@ class SerialPortsExtended: SerialPort
     public event DataReceivedCallback DataReceivedEventHandler;
 
     // Callback and event handler for passing serial data to the main object.
+    public delegate void DataReceivedForTSBCallback(object sender, string data);
+    public event DataReceivedForTSBCallback DataReceivedForTSB;
+
+    // Callback and event handler for passing serial data to the main object.
     public delegate void HM1Xupdated(object sender, object originator, object value);
     public event HM1Xupdated HM1XupdatedEventHandler;
 
@@ -109,6 +111,12 @@ class SerialPortsExtended: SerialPort
         return portList;
     }
 
+
+    public void setCaptureStream(bool enable)
+    {
+        captureStream = enable;
+    }
+
     // Open port using string identifiers.
     public void openPort(string port, string baudRate, string dataBits, string stopBits, string parity, string handshaking)
     {
@@ -131,6 +139,7 @@ class SerialPortsExtended: SerialPort
                 // Only create one data handler, otherwise to whom do we listen?
                 if (!dataHandlerAttached)
                 {
+                    ComPort.Encoding = System.Text.Encoding.GetEncoding(28591);
                     ComPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
                     dataHandlerAttached = true;
                 }
@@ -297,7 +306,7 @@ class SerialPortsExtended: SerialPort
     {
         // Gets incoming data from open port and passes it to a handler.
         InputData = ComPort.ReadExisting();
-        Console.WriteLine("RXed: {0}", InputData);
+        //Console.WriteLine("RXed: {0}", InputData);
         
         // If not empty and we want to foreit capture to delegate.
         if (InputData != String.Empty && captureStream == false)
@@ -309,8 +318,13 @@ class SerialPortsExtended: SerialPort
             catch (UnauthorizedAccessException ex) { MessageBox.Show(ex.Message); }
         } else if (InputData != String.Empty && captureStream == true)
         {
+            try
+            {
+                this.DataReceivedForTSB(this, InputData);
+            }
+            catch (UnauthorizedAccessException ex) { MessageBox.Show(ex.Message); }
             captureBuffer = InputData;
-            Console.WriteLine("Debug1: {0}", captureBuffer);
+            //Console.WriteLine("Debug1: {0}", captureBuffer);
             captureBuffer = "";
         }
         else
@@ -342,7 +356,7 @@ class SerialPortsExtended: SerialPort
             }
             catch (TimeoutException ex)
             {
-                Console.WriteLine(ex.ToString());
+                //Console.WriteLine(ex.ToString());
                 MessageBox.Show(null, "Device on " + ComPort.PortName + " is not responding...", "Write Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }   
         } else

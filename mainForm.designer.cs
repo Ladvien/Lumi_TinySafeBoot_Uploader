@@ -88,6 +88,15 @@
             this.String = new System.Windows.Forms.Label();
             this.cmbCharAfterRx = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
+            this.tabTSB = new System.Windows.Forms.TabPage();
+            this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.rtbHexFilePath = new System.Windows.Forms.RichTextBox();
+            this.btnOpenFile = new System.Windows.Forms.Button();
+            this.btnWriteHexFile = new System.Windows.Forms.Button();
+            this.btnReadHexFile = new System.Windows.Forms.Button();
+            this.cmbChip = new System.Windows.Forms.ComboBox();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.btnSend = new System.Windows.Forms.Button();
             this.txbSendTextBox = new System.Windows.Forms.TextBox();
@@ -102,6 +111,7 @@
             this.txbSysMsg = new System.Windows.Forms.TextBox();
             this.btmClearMainDisplay = new System.Windows.Forms.Button();
             this.pbSysStatus = new System.Windows.Forms.ProgressBar();
+            this.ofdHexFile = new System.Windows.Forms.OpenFileDialog();
             this.mnuMainMenu.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tbcBottomPane.SuspendLayout();
@@ -109,6 +119,8 @@
             this.tloPortSettings.SuspendLayout();
             this.tabDataSettings.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
+            this.tabTSB.SuspendLayout();
+            this.tableLayoutPanel5.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
             this.menuPanel.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -159,7 +171,7 @@
             this.newToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(211, 30);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(206, 30);
             this.newToolStripMenuItem.Text = "&New";
             // 
             // openToolStripMenuItem
@@ -401,11 +413,12 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbcBottomPane.Controls.Add(this.tabPortSettings);
             this.tbcBottomPane.Controls.Add(this.tabDataSettings);
+            this.tbcBottomPane.Controls.Add(this.tabTSB);
             this.tbcBottomPane.Location = new System.Drawing.Point(3, 464);
             this.tbcBottomPane.Name = "tbcBottomPane";
             this.tbcBottomPane.SelectedIndex = 0;
             this.tbcBottomPane.Size = new System.Drawing.Size(963, 201);
-            this.tbcBottomPane.TabIndex = 1;
+            this.tbcBottomPane.TabIndex = 0;
             // 
             // tabPortSettings
             // 
@@ -697,6 +710,123 @@
             this.label7.Text = "Char(s) after RX";
             this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
+            // tabTSB
+            // 
+            this.tabTSB.Controls.Add(this.tableLayoutPanel5);
+            this.tabTSB.Location = new System.Drawing.Point(4, 29);
+            this.tabTSB.Name = "tabTSB";
+            this.tabTSB.Padding = new System.Windows.Forms.Padding(3);
+            this.tabTSB.Size = new System.Drawing.Size(955, 168);
+            this.tabTSB.TabIndex = 2;
+            this.tabTSB.Text = "TSB";
+            this.tabTSB.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanel5
+            // 
+            this.tableLayoutPanel5.ColumnCount = 3;
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 31.61222F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 68.38778F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 366F));
+            this.tableLayoutPanel5.Controls.Add(this.label9, 0, 2);
+            this.tableLayoutPanel5.Controls.Add(this.label10, 0, 1);
+            this.tableLayoutPanel5.Controls.Add(this.rtbHexFilePath, 1, 1);
+            this.tableLayoutPanel5.Controls.Add(this.btnOpenFile, 1, 0);
+            this.tableLayoutPanel5.Controls.Add(this.btnWriteHexFile, 1, 3);
+            this.tableLayoutPanel5.Controls.Add(this.btnReadHexFile, 2, 3);
+            this.tableLayoutPanel5.Controls.Add(this.cmbChip, 1, 2);
+            this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel5.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel5.Name = "tableLayoutPanel5";
+            this.tableLayoutPanel5.RowCount = 4;
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(949, 162);
+            this.tableLayoutPanel5.TabIndex = 0;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label9.Location = new System.Drawing.Point(3, 80);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(178, 40);
+            this.label9.TabIndex = 6;
+            this.label9.Text = "Chip:";
+            this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label10.Location = new System.Drawing.Point(3, 40);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(178, 40);
+            this.label10.TabIndex = 5;
+            this.label10.Text = "Hex File Path:";
+            this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // rtbHexFilePath
+            // 
+            this.rtbHexFilePath.DetectUrls = false;
+            this.rtbHexFilePath.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rtbHexFilePath.ForeColor = System.Drawing.SystemColors.MenuText;
+            this.rtbHexFilePath.Location = new System.Drawing.Point(187, 43);
+            this.rtbHexFilePath.Multiline = false;
+            this.rtbHexFilePath.Name = "rtbHexFilePath";
+            this.rtbHexFilePath.ReadOnly = true;
+            this.rtbHexFilePath.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
+            this.rtbHexFilePath.Size = new System.Drawing.Size(392, 34);
+            this.rtbHexFilePath.TabIndex = 2;
+            this.rtbHexFilePath.Text = "None";
+            // 
+            // btnOpenFile
+            // 
+            this.btnOpenFile.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnOpenFile.Location = new System.Drawing.Point(187, 3);
+            this.btnOpenFile.Name = "btnOpenFile";
+            this.btnOpenFile.Size = new System.Drawing.Size(392, 34);
+            this.btnOpenFile.TabIndex = 3;
+            this.btnOpenFile.Text = "Open Hex File";
+            this.btnOpenFile.UseVisualStyleBackColor = true;
+            // 
+            // btnWriteHexFile
+            // 
+            this.btnWriteHexFile.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnWriteHexFile.Location = new System.Drawing.Point(187, 123);
+            this.btnWriteHexFile.Name = "btnWriteHexFile";
+            this.btnWriteHexFile.Size = new System.Drawing.Size(392, 36);
+            this.btnWriteHexFile.TabIndex = 1;
+            this.btnWriteHexFile.Text = "Write File";
+            this.btnWriteHexFile.UseVisualStyleBackColor = true;
+            this.btnWriteHexFile.Click += new System.EventHandler(this.btnWriteHexFile_Click);
+            // 
+            // btnReadHexFile
+            // 
+            this.btnReadHexFile.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnReadHexFile.Location = new System.Drawing.Point(585, 123);
+            this.btnReadHexFile.Name = "btnReadHexFile";
+            this.btnReadHexFile.Size = new System.Drawing.Size(361, 36);
+            this.btnReadHexFile.TabIndex = 4;
+            this.btnReadHexFile.Text = "Read File";
+            this.btnReadHexFile.UseVisualStyleBackColor = true;
+            this.btnReadHexFile.Click += new System.EventHandler(this.btnReadHexFile_Click);
+            // 
+            // cmbChip
+            // 
+            this.cmbChip.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cmbChip.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbChip.FormattingEnabled = true;
+            this.cmbChip.Location = new System.Drawing.Point(187, 83);
+            this.cmbChip.Name = "cmbChip";
+            this.cmbChip.Size = new System.Drawing.Size(392, 28);
+            this.cmbChip.TabIndex = 7;
+            // 
             // tableLayoutPanel4
             // 
             this.tableLayoutPanel4.ColumnCount = 5;
@@ -818,7 +948,6 @@
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(160, 631);
             this.tableLayoutPanel2.TabIndex = 2;
-            this.tableLayoutPanel2.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayoutPanel2_Paint);
             // 
             // label12
             // 
@@ -887,6 +1016,10 @@
             this.pbSysStatus.Size = new System.Drawing.Size(154, 36);
             this.pbSysStatus.TabIndex = 11;
             // 
+            // ofdHexFile
+            // 
+            this.ofdHexFile.FileName = "openFileDialog1";
+            // 
             // MainDisplay
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -909,6 +1042,9 @@
             this.tabDataSettings.ResumeLayout(false);
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel3.PerformLayout();
+            this.tabTSB.ResumeLayout(false);
+            this.tableLayoutPanel5.ResumeLayout(false);
+            this.tableLayoutPanel5.PerformLayout();
             this.tableLayoutPanel4.ResumeLayout(false);
             this.tableLayoutPanel4.PerformLayout();
             this.menuPanel.ResumeLayout(false);
@@ -954,9 +1090,22 @@
         private System.Windows.Forms.ToolStripMenuItem serialPortsToolStripMenuItem;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.ToolStripMenuItem defaultToolStripMenuItem;
+        private System.Windows.Forms.Panel menuPanel;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
+        private System.Windows.Forms.Button btnConnect;
+        private System.Windows.Forms.Label lblConnectionStatus;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
+        private System.Windows.Forms.TextBox txbSendTextBox;
+        private System.Windows.Forms.Button btnSend;
+        private System.Windows.Forms.Button btnToggleStringHexSendText;
+        private System.Windows.Forms.Button btnClearSendBox;
+        private System.Windows.Forms.TextBox txbSysMsg;
+        private System.Windows.Forms.Button btmClearMainDisplay;
+        private System.Windows.Forms.RichTextBox rtbMainDisplay;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.ProgressBar pbSysStatus;
         private System.Windows.Forms.TabControl tbcBottomPane;
         private System.Windows.Forms.TabPage tabPortSettings;
-        private System.Windows.Forms.TabPage tabDataSettings;
         private System.Windows.Forms.TableLayoutPanel tloPortSettings;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
@@ -967,30 +1116,27 @@
         private System.Windows.Forms.ComboBox cmbStopBitsPortSettingsTab;
         private System.Windows.Forms.ComboBox cmbParityPortSettingsTab;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Panel menuPanel;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.ComboBox cmbDataBitsPortSettingsTab;
         private System.Windows.Forms.ComboBox cmbHandshakingPortSettingsTab;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
-        private System.Windows.Forms.Button btnConnect;
-        private System.Windows.Forms.Label lblConnectionStatus;
+        private System.Windows.Forms.TabPage tabDataSettings;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
-        private System.Windows.Forms.Label String;
-        private System.Windows.Forms.ComboBox cmbDataAs;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
-        private System.Windows.Forms.TextBox txbSendTextBox;
-        private System.Windows.Forms.Button btnSend;
-        private System.Windows.Forms.Button btnToggleStringHexSendText;
-        private System.Windows.Forms.Button btnClearSendBox;
-        private System.Windows.Forms.TextBox txbSysMsg;
-        private System.Windows.Forms.Button btmClearMainDisplay;
-        private System.Windows.Forms.ComboBox cmbCharAfterRx;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.RichTextBox rtbMainDisplay;
         private System.Windows.Forms.ComboBox cmbCharsAfterTx;
         private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.ProgressBar pbSysStatus;
+        private System.Windows.Forms.ComboBox cmbDataAs;
+        private System.Windows.Forms.Label String;
+        private System.Windows.Forms.ComboBox cmbCharAfterRx;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TabPage tabTSB;
+        private System.Windows.Forms.OpenFileDialog ofdHexFile;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
+        private System.Windows.Forms.Button btnWriteHexFile;
+        private System.Windows.Forms.RichTextBox rtbHexFilePath;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Button btnOpenFile;
+        private System.Windows.Forms.Button btnReadHexFile;
+        private System.Windows.Forms.ComboBox cmbChip;
     }
 
 
