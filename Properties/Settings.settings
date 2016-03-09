@@ -1,5 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="HM_1X_Aid_v01.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Lumi_Uploader_for_TinySafeBoot.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
     <Setting Name="BaudRate" Type="System.Int32" Scope="User">
@@ -36,6 +36,9 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="hm1xCommand" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="tabIndex" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
   </Settings>

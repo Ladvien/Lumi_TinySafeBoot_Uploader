@@ -89,7 +89,7 @@
             this.cmbCharAfterRx = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
             this.tabTSB = new System.Windows.Forms.TabPage();
-            this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
+            this.ltbTSB = new System.Windows.Forms.TableLayoutPanel();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.rtbHexFilePath = new System.Windows.Forms.RichTextBox();
@@ -111,6 +111,8 @@
             this.txbSysMsg = new System.Windows.Forms.TextBox();
             this.btmClearMainDisplay = new System.Windows.Forms.Button();
             this.pbSysStatus = new System.Windows.Forms.ProgressBar();
+            this.lblTSB = new System.Windows.Forms.Label();
+            this.btnConnectToTSB = new System.Windows.Forms.Button();
             this.ofdHexFile = new System.Windows.Forms.OpenFileDialog();
             this.mnuMainMenu.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -120,7 +122,7 @@
             this.tabDataSettings.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
             this.tabTSB.SuspendLayout();
-            this.tableLayoutPanel5.SuspendLayout();
+            this.ltbTSB.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
             this.menuPanel.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -712,7 +714,7 @@
             // 
             // tabTSB
             // 
-            this.tabTSB.Controls.Add(this.tableLayoutPanel5);
+            this.tabTSB.Controls.Add(this.ltbTSB);
             this.tabTSB.Location = new System.Drawing.Point(4, 29);
             this.tabTSB.Name = "tabTSB";
             this.tabTSB.Padding = new System.Windows.Forms.Padding(3);
@@ -721,29 +723,29 @@
             this.tabTSB.Text = "TSB";
             this.tabTSB.UseVisualStyleBackColor = true;
             // 
-            // tableLayoutPanel5
+            // ltbTSB
             // 
-            this.tableLayoutPanel5.ColumnCount = 3;
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 31.61222F));
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 68.38778F));
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 366F));
-            this.tableLayoutPanel5.Controls.Add(this.label9, 0, 2);
-            this.tableLayoutPanel5.Controls.Add(this.label10, 0, 1);
-            this.tableLayoutPanel5.Controls.Add(this.rtbHexFilePath, 1, 1);
-            this.tableLayoutPanel5.Controls.Add(this.btnOpenFile, 1, 0);
-            this.tableLayoutPanel5.Controls.Add(this.btnWriteHexFile, 1, 3);
-            this.tableLayoutPanel5.Controls.Add(this.btnReadHexFile, 2, 3);
-            this.tableLayoutPanel5.Controls.Add(this.cmbChip, 1, 2);
-            this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel5.Location = new System.Drawing.Point(3, 3);
-            this.tableLayoutPanel5.Name = "tableLayoutPanel5";
-            this.tableLayoutPanel5.RowCount = 4;
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(949, 162);
-            this.tableLayoutPanel5.TabIndex = 0;
+            this.ltbTSB.ColumnCount = 3;
+            this.ltbTSB.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 31.61222F));
+            this.ltbTSB.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 68.38778F));
+            this.ltbTSB.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 378F));
+            this.ltbTSB.Controls.Add(this.label9, 0, 2);
+            this.ltbTSB.Controls.Add(this.label10, 0, 1);
+            this.ltbTSB.Controls.Add(this.rtbHexFilePath, 1, 1);
+            this.ltbTSB.Controls.Add(this.btnOpenFile, 1, 0);
+            this.ltbTSB.Controls.Add(this.btnWriteHexFile, 1, 3);
+            this.ltbTSB.Controls.Add(this.btnReadHexFile, 2, 3);
+            this.ltbTSB.Controls.Add(this.cmbChip, 1, 2);
+            this.ltbTSB.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ltbTSB.Location = new System.Drawing.Point(3, 3);
+            this.ltbTSB.Name = "ltbTSB";
+            this.ltbTSB.RowCount = 4;
+            this.ltbTSB.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.ltbTSB.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.ltbTSB.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.ltbTSB.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.5F));
+            this.ltbTSB.Size = new System.Drawing.Size(949, 162);
+            this.ltbTSB.TabIndex = 0;
             // 
             // label9
             // 
@@ -751,7 +753,7 @@
             this.label9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label9.Location = new System.Drawing.Point(3, 80);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(178, 40);
+            this.label9.Size = new System.Drawing.Size(174, 40);
             this.label9.TabIndex = 6;
             this.label9.Text = "Chip:";
             this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -762,7 +764,7 @@
             this.label10.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label10.Location = new System.Drawing.Point(3, 40);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(178, 40);
+            this.label10.Size = new System.Drawing.Size(174, 40);
             this.label10.TabIndex = 5;
             this.label10.Text = "Hex File Path:";
             this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -772,21 +774,21 @@
             this.rtbHexFilePath.DetectUrls = false;
             this.rtbHexFilePath.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rtbHexFilePath.ForeColor = System.Drawing.SystemColors.MenuText;
-            this.rtbHexFilePath.Location = new System.Drawing.Point(187, 43);
+            this.rtbHexFilePath.Location = new System.Drawing.Point(183, 43);
             this.rtbHexFilePath.Multiline = false;
             this.rtbHexFilePath.Name = "rtbHexFilePath";
             this.rtbHexFilePath.ReadOnly = true;
             this.rtbHexFilePath.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
-            this.rtbHexFilePath.Size = new System.Drawing.Size(392, 34);
+            this.rtbHexFilePath.Size = new System.Drawing.Size(384, 34);
             this.rtbHexFilePath.TabIndex = 2;
             this.rtbHexFilePath.Text = "None";
             // 
             // btnOpenFile
             // 
             this.btnOpenFile.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnOpenFile.Location = new System.Drawing.Point(187, 3);
+            this.btnOpenFile.Location = new System.Drawing.Point(183, 3);
             this.btnOpenFile.Name = "btnOpenFile";
-            this.btnOpenFile.Size = new System.Drawing.Size(392, 34);
+            this.btnOpenFile.Size = new System.Drawing.Size(384, 34);
             this.btnOpenFile.TabIndex = 3;
             this.btnOpenFile.Text = "Open Hex File";
             this.btnOpenFile.UseVisualStyleBackColor = true;
@@ -796,9 +798,9 @@
             this.btnWriteHexFile.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnWriteHexFile.Location = new System.Drawing.Point(187, 123);
+            this.btnWriteHexFile.Location = new System.Drawing.Point(183, 123);
             this.btnWriteHexFile.Name = "btnWriteHexFile";
-            this.btnWriteHexFile.Size = new System.Drawing.Size(392, 36);
+            this.btnWriteHexFile.Size = new System.Drawing.Size(384, 36);
             this.btnWriteHexFile.TabIndex = 1;
             this.btnWriteHexFile.Text = "Write File";
             this.btnWriteHexFile.UseVisualStyleBackColor = true;
@@ -809,9 +811,9 @@
             this.btnReadHexFile.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnReadHexFile.Location = new System.Drawing.Point(585, 123);
+            this.btnReadHexFile.Location = new System.Drawing.Point(573, 123);
             this.btnReadHexFile.Name = "btnReadHexFile";
-            this.btnReadHexFile.Size = new System.Drawing.Size(361, 36);
+            this.btnReadHexFile.Size = new System.Drawing.Size(373, 36);
             this.btnReadHexFile.TabIndex = 4;
             this.btnReadHexFile.Text = "Read File";
             this.btnReadHexFile.UseVisualStyleBackColor = true;
@@ -822,9 +824,9 @@
             this.cmbChip.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbChip.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbChip.FormattingEnabled = true;
-            this.cmbChip.Location = new System.Drawing.Point(187, 83);
+            this.cmbChip.Location = new System.Drawing.Point(183, 83);
             this.cmbChip.Name = "cmbChip";
-            this.cmbChip.Size = new System.Drawing.Size(392, 28);
+            this.cmbChip.Size = new System.Drawing.Size(384, 28);
             this.cmbChip.TabIndex = 7;
             // 
             // tableLayoutPanel4
@@ -929,6 +931,8 @@
             this.tableLayoutPanel2.Controls.Add(this.txbSysMsg, 0, 11);
             this.tableLayoutPanel2.Controls.Add(this.btmClearMainDisplay, 0, 3);
             this.tableLayoutPanel2.Controls.Add(this.pbSysStatus, 0, 10);
+            this.tableLayoutPanel2.Controls.Add(this.lblTSB, 0, 4);
+            this.tableLayoutPanel2.Controls.Add(this.btnConnectToTSB, 0, 5);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(20, 20);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -1016,6 +1020,30 @@
             this.pbSysStatus.Size = new System.Drawing.Size(154, 36);
             this.pbSysStatus.TabIndex = 11;
             // 
+            // lblTSB
+            // 
+            this.lblTSB.AutoSize = true;
+            this.lblTSB.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblTSB.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTSB.Location = new System.Drawing.Point(3, 168);
+            this.lblTSB.Name = "lblTSB";
+            this.lblTSB.Size = new System.Drawing.Size(154, 42);
+            this.lblTSB.TabIndex = 12;
+            this.lblTSB.Text = "Tiny Safe Boot";
+            this.lblTSB.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // btnConnectToTSB
+            // 
+            this.btnConnectToTSB.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnConnectToTSB.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnConnectToTSB.Location = new System.Drawing.Point(3, 213);
+            this.btnConnectToTSB.Name = "btnConnectToTSB";
+            this.btnConnectToTSB.Size = new System.Drawing.Size(154, 36);
+            this.btnConnectToTSB.TabIndex = 13;
+            this.btnConnectToTSB.Text = "Connect to TSB";
+            this.btnConnectToTSB.UseVisualStyleBackColor = true;
+            this.btnConnectToTSB.Click += new System.EventHandler(this.btnConnectToTSB_Click);
+            // 
             // ofdHexFile
             // 
             this.ofdHexFile.FileName = "openFileDialog1";
@@ -1031,6 +1059,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainDisplay";
             this.Text = "HM-1X Aid v01";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainDisplay_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.mnuMainMenu.ResumeLayout(false);
             this.mnuMainMenu.PerformLayout();
@@ -1043,8 +1072,8 @@
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel3.PerformLayout();
             this.tabTSB.ResumeLayout(false);
-            this.tableLayoutPanel5.ResumeLayout(false);
-            this.tableLayoutPanel5.PerformLayout();
+            this.ltbTSB.ResumeLayout(false);
+            this.ltbTSB.PerformLayout();
             this.tableLayoutPanel4.ResumeLayout(false);
             this.tableLayoutPanel4.PerformLayout();
             this.menuPanel.ResumeLayout(false);
@@ -1129,7 +1158,7 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TabPage tabTSB;
         private System.Windows.Forms.OpenFileDialog ofdHexFile;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
+        private System.Windows.Forms.TableLayoutPanel ltbTSB;
         private System.Windows.Forms.Button btnWriteHexFile;
         private System.Windows.Forms.RichTextBox rtbHexFilePath;
         private System.Windows.Forms.Label label9;
@@ -1137,6 +1166,8 @@
         private System.Windows.Forms.Button btnOpenFile;
         private System.Windows.Forms.Button btnReadHexFile;
         private System.Windows.Forms.ComboBox cmbChip;
+        private System.Windows.Forms.Label lblTSB;
+        private System.Windows.Forms.Button btnConnectToTSB;
     }
 
 

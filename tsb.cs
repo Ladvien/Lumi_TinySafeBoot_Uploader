@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,8 +10,14 @@ namespace Lumi_Uploader_for_TinySafeBoot
 {
     class tsb
     {
+        public delegate void TsbConnected(object sender, bool tsbConnectionStatus);
+        public event TsbConnected TsbConnectedEventHandler;
+
         // Create serial command timeout timer.
         private static System.Timers.Timer tsbCommandTimer;
+
+        // Connected to TSB.
+        private bool tsbConnected = false;
 
         const int commandAttempts = 3;
         private int commandAttemptsIndex = 0;
@@ -19,8 +25,9 @@ namespace Lumi_Uploader_for_TinySafeBoot
         private string rxBuffer = "";
 
         // Firmware date.
-        string firmwareDateString;
+        public string firmwareDateString;
         long firmwareDate;
+
         // Atmel device signature.
         string deviceSignature;
         // The size is in words, make it bytes.
@@ -29,25 +36,31 @@ namespace Lumi_Uploader_for_TinySafeBoot
         int flashSize;
         // Get EEPROM size.
         int fullEepromSize;
+        // Number of pages
+        int numberOfPages = 0;
 
+        // Flash Read Buffer
+        byte[] readFlashBuffer = { 0 };
+        int readFlashPageIndex = 0;
 
-
-        tsbCommands commandInProgress = new tsbCommands();
+        commands commandInProgress = new commands();
 
         SerialPortsExtended serialPorts;
         RichTextBox mainDisplay;
+        ProgressBar progressBar;
 
         public string readFlash(SerialPortsExtended serialPort)
         {
-            
             return "";
         } 
 
-        public void init(SerialPortsExtended serialPortMain, RichTextBox mainDisplayMain)
+        public void init(SerialPortsExtended serialPortMain, RichTextBox mainDisplayMain, ProgressBar mainProgressBar)
         {
             serialPorts = serialPortMain;
             mainDisplay = mainDisplayMain;
             serialPorts.DataReceivedForTSB += new SerialPortsExtended.DataReceivedForTSBCallback(gotData);
+            progressBar = mainProgressBar;
+
         }
 
 
@@ -60,7 +73,7 @@ namespace Lumi_Uploader_for_TinySafeBoot
         }
 
         // TSB Command Variables
-        public enum tsbCommands: int
+        public enum commands: int
         {
            none = 0,
            hello = 1,
@@ -71,10 +84,11 @@ namespace Lumi_Uploader_for_TinySafeBoot
            readEEPROM = 6,
            writeEEPROM = 7,
            readUserData = 8,
-           writeUserData = 9
+           writeUserData = 9,
+           error = 10
         }
 
-        public static string[] tsbCommandsAsStrings =
+        public static string[] commandsAsStrings =
         {
             "",
             "@@@",
@@ -88,25 +102,35 @@ namespace Lumi_Uploader_for_TinySafeBoot
             "C",
         };
 
-        public string commandString(tsbCommands commandNumber)
+        public string commandString(commands commandNumber)
         {
             // 1. Return the command string.
-            return tsbCommandsAsStrings[(int)commandNumber];
+            return commandsAsStrings[(int)commandNumber];
         }
 
-        public void execute(tsbCommands commandNumber)
+        public void execute(commands commandNumber, int timer)
         {
             // 1. Update actionInProgress
             // 2. Set write timeout callback.
             // 3. Capture the serial stream.
             // 4. Write command to serial port.
+
+            if (mainDisplay.InvokeRequired)
+            {
+                mainDisplay.Invoke(new Action<commands, int>(execute), new object[] { commandNumber, timer });
+                return;
+            }
             updateActionInProgress(commandNumber);
-            setCommandTimer(500);
+            //setCommandTimer(timer);
             serialPorts.setCaptureStream(true);
-            serialPorts.WriteData(commandString(tsbCommands.hello));
+            serialPorts.WriteData(commandsAsStrings[(int)commandNumber]);
+            if((int)commandNumber == 4)
+            {
+                serialPorts.WriteData("!");
+            }
         }
 
-        public void updateActionInProgress(tsbCommands commandNumber)
+        public void updateActionInProgress(commands commandNumber)
         {
             commandInProgress = commandNumber;
         }
@@ -116,18 +140,29 @@ namespace Lumi_Uploader_for_TinySafeBoot
         {
             // 1. Disable commandTimmer
             // 2. Switch to command in progress.
-            if(tsbCommandTimer != null)
+            if(tsbCommandTimer != null )//|| tsbCommandTimer.Enabled == true)
             {
                 tsbCommandTimer.Enabled = false;
             }
 
             rxBuffer += data;
+            Console.WriteLine(data);
             Console.WriteLine(rxBuffer.Length);
 
             switch (commandInProgress)
             {
-                case tsbCommands.hello:
-                    helloProcessing(data);
+                case commands.hello:
+                    updateActionInProgress(commandInProgress);
+                    helloProcessing();
+                    break;
+                case commands.readFlash:
+                    updateActionInProgress(commandInProgress);
+                    //execute(commands.readFlash, 700);
+                    //execute(commands.confirm, 700);
+                    readFlash();
+                    break;
+                case commands.error:
+                    Console.WriteLine("Error!!");
                     break;
                 default:
                     Console.WriteLine("Error while checking command progress.");
@@ -143,23 +178,35 @@ namespace Lumi_Uploader_for_TinySafeBoot
             // 2. Add callback method.
             // 3. Define timer behaviors.
             //Console.WriteLine("Set timer for {0}ms", milliseconds);
-
-            // Create a timer with a x second interval.
-            tsbCommandTimer = new System.Timers.Timer(milliseconds);
-            // Hook up the Elapsed event for the timer. 
-            tsbCommandTimer.Elapsed += tsbCommandTimerTimeout;
-            tsbCommandTimer.AutoReset = false;
-            tsbCommandTimer.Enabled = true;
+            if(milliseconds > 0)
+            {
+                // Create a timer with a x second interval.
+                tsbCommandTimer = new System.Timers.Timer(milliseconds);
+                // Hook up the Elapsed event for the timer. 
+                tsbCommandTimer.Elapsed += tsbCommandTimerTimeout;
+                tsbCommandTimer.AutoReset = false;
+                tsbCommandTimer.Enabled = true;
+            }
         }
 
         private void tsbCommandTimerTimeout(object source, EventArgs e)
         {
+            if(commandAttemptsIndex < commandAttempts)
+            {
+                //execute(commandInProgress, 500);
+                commandAttemptsIndex++;
+            } else
+            {
+                commandAttemptsIndex = 0;
+            }
+
             tsbCommandTimer.Enabled = false;
+            serialPorts.setCaptureStream(false);
             Console.WriteLine("Timer expired");
         }
 
 
-        private void helloProcessing(string data)
+        private void helloProcessing()
         {
 
             int[] firmwareDatePieces = { 0x00, 0x00 };
@@ -174,10 +221,10 @@ namespace Lumi_Uploader_for_TinySafeBoot
 
                 Console.WriteLine(rxBuffer);
                 //Console.WriteLine(rxBuffer.Length);
-            } else if (rxBuffer.Contains("tsb") && rxBuffer.Length == 17)
+            } else if (rxBuffer.Contains("tsb") || rxBuffer.Contains("TSB") && rxBuffer.Length == 17)
             {
                 Console.WriteLine(rxBuffer.Length);
-                byte[] tsbGreetingBytes = Encoding.Default.GetBytes(data);
+                byte[] tsbGreetingBytes = Encoding.Default.GetBytes(rxBuffer);
                 
                 if (rxBuffer.Length > 16)
                 {
@@ -208,6 +255,9 @@ namespace Lumi_Uploader_for_TinySafeBoot
                 pageSize = (pagesizeInWords * 2);
                 string pageSizeString = (pagesizeInWords * 2).ToString();
 
+                // REPLACE WITH DEVICE INFO
+                numberOfPages = 32768 / pageSize;
+
                 // Get flash size.
                 flashSize = ((freeFlash[1] << 8) | freeFlash[0])*2;
                 string flashLeft = flashSize.ToString();
@@ -221,13 +271,73 @@ namespace Lumi_Uploader_for_TinySafeBoot
                     + "\nSignature:\t\t" + deviceSignature
                     + "\nPage Size:\t\t" + pageSizeString
                     + "\nFlash Free:\t\t" + flashLeft
-                    + "\nEEPROM size:\t" + eeprom,
+                    + "\nEEPROM size:\t " + eeprom + "\n",
                     System.Drawing.Color.LightBlue);
 
                 serialPorts.setCaptureStream(false);
-                rxBuffer = "";
-                commandInProgress = tsbCommands.none;
+                flushRxBuffer();
+                commandInProgress = commands.none;
+                TsbConnectedEventHandler(this, true);
             }
+        }
+
+
+
+        private void readFlash()
+        {
+            // 1. Read incoming data until CF ('!') count is higher than readFlashPageIndex.
+            // 2. Create a new byte array from the string rxBuffer
+            // 3. Send another read flash command.
+            // 4. When readFlashPageIndex is exceeded...
+
+            //if(rxBuffer.Length < pageSize)
+            if(rxBuffer.Length < 64)
+            {
+                serialPorts.WriteData("!");
+                //execute(commands.confirm, 500);
+                return;
+            } else if (readFlashPageIndex < numberOfPages)
+            {
+                Console.WriteLine(numberOfPages);
+                byte[] page = Encoding.Default.GetBytes(rxBuffer.Substring(0, 63));
+                if (rxBuffer.Length > 63)
+                {
+                    rxBuffer = rxBuffer.Substring(64, (rxBuffer.Length - 64));
+                    readFlashBuffer.Concat(page);
+                }
+
+                if (progressBar.InvokeRequired)
+                {
+                    
+                }
+
+                //readFlashBuffer = encoding.default.getbytes(rxbuffer);
+                //setMainDisplayTextSafely("\npage #: " + readFlashPageIndex + "\n", System.Drawing.Color.AliceBlue);
+                //setMainDisplayTextSafely(rxBuffer + "\n", System.Drawing.Color.LimeGreen);
+                flushRxBuffer();
+
+                readFlashPageIndex++;
+                serialPorts.WriteData("!");
+                //execute(commands.confirm, 500);
+            }
+        
+            else
+            {
+                setMainDisplayTextSafely("Total bytes of flash read: " + readFlashBuffer.Length, System.Drawing.Color.Red);
+                readFlashPageIndex = 0;
+                displayFlashReadBuffer();
+            }
+        }
+
+
+        public void setTsbConnectionSafely(bool tsbConnection)
+        {
+            if (mainDisplay.InvokeRequired)
+            {
+                TsbConnectedEventHandler.Invoke(this, tsbConnection);
+                return;
+            }
+            TsbConnectedEventHandler.Invoke(this, tsbConnection);
         }
 
         private void setMainDisplayTextSafely(string text, System.Drawing.Color color)
@@ -248,5 +358,30 @@ namespace Lumi_Uploader_for_TinySafeBoot
             return hex.ToString();
         }
 
+        public void flushRxBuffer()
+        {
+            rxBuffer = "";
+        }
+
+        public void displayFlashReadBuffer()
+        {
+            if (mainDisplay.InvokeRequired)
+            {
+                mainDisplay.Invoke(new Action(displayFlashReadBuffer), new object[] { });
+                return;
+            }
+
+            int index = 0;
+
+            while(index < rxBuffer.Length)
+            {
+                for(int i = 0; i < 8; i++)
+                {
+                    mainDisplay.Text += (Encoding.UTF8.GetString(readFlashBuffer, 0, index));
+                    index += 8;
+                }
+
+            }
+        }
     }
 }

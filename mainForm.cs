@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Reflection;
 using Lumi_Uploader_for_TinySafeBoot;
+using System.Configuration;
 
 // Set version here.
 [assembly: AssemblyVersion("1.1.*")]
@@ -24,14 +25,14 @@ namespace HM_1X_Aid_v01
                                            .Version
                                            .ToString();
 
-        enum displayableDataTypes: int {HEX, Decimal, String};
-        enum charsAfterRXTX: int {None = 0, LineFeed, CarriageReturn, CarriageReturnLineFeed, LineFeedCarriageReturn};
+        enum displayableDataTypes : int { HEX, Decimal, String };
+        enum charsAfterRXTX : int { None = 0, LineFeed, CarriageReturn, CarriageReturnLineFeed, LineFeedCarriageReturn };
         bool toggleSendBoxStringHex = true;
 
         // RX data callback delegate.
         delegate void SetTextCallback(string text);
         delegate void HM1XVariableUpdate(object sender, object originator, object value);
-        
+
         // Used to handoff data from ports thread to main thread.
         string tempBuffer = "";
 
@@ -39,8 +40,7 @@ namespace HM_1X_Aid_v01
 
         // TinySafeBootloader
         private tsb tsb = new tsb();
-        tsb.tsbCommands tsbCommands = new tsb.tsbCommands();
-        
+        tsb.commands commands = new tsb.commands();
 
         OpenFileDialog hexFile = new OpenFileDialog();
 
@@ -59,15 +59,41 @@ namespace HM_1X_Aid_v01
 
             // Populate COM info.
             loadCOMInfo();
-            
+
             // RX'ed data callback.
             serialPorts.DataReceivedEventHandler += new SerialPortsExtended.DataReceivedCallback(gotData);
             serialPorts.SerialSystemUpdateEventHandler += new SerialPortsExtended.SerialSystemUpdate(serialSystemUpdate);
+            tsb.TsbConnectedEventHandler += new tsb.TsbConnected(tsbConnected);
 
             // Setup display.
             lblConnectionStatus.BackColor = Color.Red;
+            ltbTSB.Enabled = false;
 
-            tsb.init(serialPorts, rtbMainDisplay);
+            tsb.init(serialPorts, rtbMainDisplay, pbSysStatus);
+        }
+
+        private void tsbConnected(object sender, bool isConnected)
+        {
+            // 1. Check to make sure not crossing threading.
+            // 2. Update TSB connection status.
+
+            // 1
+            if (ltbTSB.InvokeRequired)
+            {
+                ltbTSB.Invoke(new Action<object, bool>(tsbConnected), new object[] { sender, isConnected });
+                return;
+            }
+
+            // 2
+            if (isConnected == true)
+            {
+                ltbTSB.Enabled = true;
+
+            }
+            else
+            {
+                ltbTSB.Enabled = false;
+            }
         }
 
         private void loadSettings()
@@ -75,52 +101,54 @@ namespace HM_1X_Aid_v01
             serialSystemUpdate(this, "Loading settings.\r\n", 0);
             if (cmbPortNumberInPortSettingsTab.Items.Count > 0)
             {
-                cmbPortNumberInPortSettingsTab.SelectedIndex = Properties.Settings.Default.lastCom;
+
+                cmbPortNumberInPortSettingsTab.SelectedIndex = Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.tabIndex;
             }
-            cmbBaudRatePortSettingsTab.SelectedIndex = Properties.Settings.Default.BaudRate;
-            cmbDataBitsPortSettingsTab.SelectedIndex = Properties.Settings.Default.dataBits;
-            cmbStopBitsPortSettingsTab.SelectedIndex = Properties.Settings.Default.stopBits;
-            cmbParityPortSettingsTab.SelectedIndex = Properties.Settings.Default.parity;
-            cmbHandshakingPortSettingsTab.SelectedIndex = Properties.Settings.Default.handshaking;
-            cmbDataAs.SelectedIndex = Properties.Settings.Default.displayDataSettings;
-            cmbCharAfterRx.SelectedIndex = Properties.Settings.Default.charsAfterRX;
-            cmbCharsAfterTx.SelectedIndex = Properties.Settings.Default.charsAfterTX;
-            tbcBottomPane.SelectedIndex = Properties.Settings.Default.bottomAreaTab;            
+
+            cmbBaudRatePortSettingsTab.SelectedIndex = Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.BaudRate;
+            cmbDataBitsPortSettingsTab.SelectedIndex = Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.dataBits;
+            cmbStopBitsPortSettingsTab.SelectedIndex = Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.stopBits;
+            cmbParityPortSettingsTab.SelectedIndex = Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.parity;
+            cmbHandshakingPortSettingsTab.SelectedIndex = Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.handshaking;
+            cmbDataAs.SelectedIndex = Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.displayDataSettings;
+            cmbCharAfterRx.SelectedIndex = Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.charsAfterRX;
+            cmbCharsAfterTx.SelectedIndex = Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.charsAfterTX;
+            tbcBottomPane.SelectedIndex = Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.bottomAreaTab;
             serialSystemUpdate(this, "Loaded settings.\r\n", 100);
         }
 
         private void saveSettings()
         {
             serialSystemUpdate(this, "Saving settings.\r\n", 0);
-            Properties.Settings.Default.lastCom = cmbPortNumberInPortSettingsTab.SelectedIndex;
-            Properties.Settings.Default.BaudRate = cmbBaudRatePortSettingsTab.SelectedIndex;
-            Properties.Settings.Default.dataBits = cmbDataBitsPortSettingsTab.SelectedIndex;
-            Properties.Settings.Default.stopBits = cmbStopBitsPortSettingsTab.SelectedIndex;
-            Properties.Settings.Default.parity = cmbParityPortSettingsTab.SelectedIndex;
-            Properties.Settings.Default.handshaking = cmbHandshakingPortSettingsTab.SelectedIndex;
-            Properties.Settings.Default.displayDataSettings = cmbDataAs.SelectedIndex;
-            Properties.Settings.Default.charsAfterRX = cmbCharAfterRx.SelectedIndex;
-            Properties.Settings.Default.charsAfterTX = cmbCharsAfterTx.SelectedIndex;
-            Properties.Settings.Default.bottomAreaTab = tbcBottomPane.SelectedIndex;
-            Properties.Settings.Default.Save();
+            Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.lastCom = cmbPortNumberInPortSettingsTab.SelectedIndex;
+            Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.BaudRate = cmbBaudRatePortSettingsTab.SelectedIndex;
+            Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.dataBits = cmbDataBitsPortSettingsTab.SelectedIndex;
+            Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.stopBits = cmbStopBitsPortSettingsTab.SelectedIndex;
+            Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.parity = cmbParityPortSettingsTab.SelectedIndex;
+            Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.handshaking = cmbHandshakingPortSettingsTab.SelectedIndex;
+            Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.displayDataSettings = cmbDataAs.SelectedIndex;
+            Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.charsAfterRX = cmbCharAfterRx.SelectedIndex;
+            Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.charsAfterTX = cmbCharsAfterTx.SelectedIndex;
+            Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.bottomAreaTab = tbcBottomPane.SelectedIndex;
+            Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.Save();
             serialSystemUpdate(this, "Saved settings.\r\n", 100);
         }
 
         private void resetSettings()
         {
             serialSystemUpdate(this, "Clearing settings.\r\n", 0);
-            Properties.Settings.Default.lastCom = 0;
-            Properties.Settings.Default.BaudRate = 0;
-            Properties.Settings.Default.dataBits = 0;
-            Properties.Settings.Default.stopBits = 0;
-            Properties.Settings.Default.parity = 0;
-            Properties.Settings.Default.handshaking = 0;
-            Properties.Settings.Default.displayDataSettings = 0;
-            Properties.Settings.Default.charsAfterRX = 0;
-            Properties.Settings.Default.charsAfterTX = 0;
-            Properties.Settings.Default.moduleType = 0;
-            Properties.Settings.Default.hm1xCommand = 0;
-            Properties.Settings.Default.Save();
+            Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.lastCom = 0;
+            Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.BaudRate = 0;
+            Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.dataBits = 0;
+            Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.stopBits = 0;
+            Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.parity = 0;
+            Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.handshaking = 0;
+            Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.displayDataSettings = 0;
+            Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.charsAfterRX = 0;
+            Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.charsAfterTX = 0;
+            Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.moduleType = 0;
+            Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.hm1xCommand = 0;
+            Lumi_Uploader_for_TinySafeBoot.Properties.Settings.Default.Save();
             serialSystemUpdate(this, "Cleared.\r\n", 100);
         }
 
@@ -184,7 +212,7 @@ namespace HM_1X_Aid_v01
             //serialSystemUpdate(this, "Loading COM info.\n", 0);
             clearMainDisplay();
             clearSerialPortMenu();
-            
+
             cmbDataAs.Items.Add(displayableDataTypes.HEX.ToString());
             cmbDataAs.Items.Add(displayableDataTypes.String.ToString());
             cmbDataAs.Items.Add(displayableDataTypes.Decimal.ToString());
@@ -218,7 +246,7 @@ namespace HM_1X_Aid_v01
             if (portList.Count > 0)
             {
                 togglePortMenu(true);
-                
+
                 // Set the default COM port.
                 cmbPortNumberInPortSettingsTab.SelectedIndex = 0;
 
@@ -241,10 +269,10 @@ namespace HM_1X_Aid_v01
         }
 
         private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {       
-            
+        {
+
         }
-        
+
         private void exitToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             saveSettings();
@@ -275,13 +303,23 @@ namespace HM_1X_Aid_v01
             cmbStopBitsPortSettingsTab.Enabled = offOrOn;
             cmbParityPortSettingsTab.Enabled = offOrOn;
             cmbHandshakingPortSettingsTab.Enabled = offOrOn;
+
+            if (offOrOn)
+            {
+                btnConnectToTSB.Enabled = false;
+            }
+            else
+            {
+                btnConnectToTSB.Enabled = true;
+            }
+
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
 
         }
-        
+
         // My methods.
         private void clearMainDisplay()
         {
@@ -293,7 +331,7 @@ namespace HM_1X_Aid_v01
             rtbMainDisplay.Text = text;
             //txbSysMsg.ScrollToCaret();
         }
-        
+
         private void addDisplayText(string text)
         {
             rtbMainDisplay.AppendText(text);
@@ -303,7 +341,7 @@ namespace HM_1X_Aid_v01
         private void addSysMsgText(string text)
         {
             txbSysMsg.Text += text;
-             txbSysMsg.ScrollToCaret();
+            txbSysMsg.ScrollToCaret();
         }
 
         private void setSysMsgText(string text)
@@ -365,7 +403,7 @@ namespace HM_1X_Aid_v01
                     togglePortMenu(false);
                     serialPorts.setReadTimeout(1000);
                     serialPorts.setWriteTimeout(1000);
-                    btnConnect.Text = "Disconnect";                   
+                    btnConnect.Text = "Disconnect";
                 }
                 else // If the port didn't connect, make sure UI reflects it.
                 {
@@ -397,7 +435,7 @@ namespace HM_1X_Aid_v01
         private void btnToggleStringHexSendText_Click(object sender, EventArgs e)
         {
             string result = "";
-            
+
             if (toggleSendBoxStringHex)
             {
                 result = serialPorts.convertASCIIStringToHexString(txbSendTextBox.Text);
@@ -405,7 +443,8 @@ namespace HM_1X_Aid_v01
                 btnToggleStringHexSendText.Text = "Hex";
                 txbSendTextBox.BackColor = Color.Black;
                 txbSendTextBox.ForeColor = Color.WhiteSmoke;
-            } else
+            }
+            else
             {
                 if (serialPorts.isValidHexString(txbSendTextBox.Text))
                 {
@@ -439,11 +478,13 @@ namespace HM_1X_Aid_v01
             if (toggleSendBoxStringHex)
             {
                 serialPorts.WriteData(result);
-            } else if(!toggleSendBoxStringHex)
+            }
+            else if (!toggleSendBoxStringHex)
             {
                 string data = serialPorts.convertHexStringToASCIIHex(result);
                 serialPorts.WriteData(data);
-            } else
+            }
+            else
             {
                 serialPorts.WriteData(result);
                 MessageBox.Show(null, "Problem sending data.", "Send error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -473,14 +514,27 @@ namespace HM_1X_Aid_v01
 
         private void btnWriteHexFile_Click(object sender, EventArgs e)
         {
-            tsb.execute(tsb.tsbCommands.hello);
+
         }
 
 
         private void btnReadHexFile_Click(object sender, EventArgs e)
         {
-            
+            tsb.execute(tsb.commands.readFlash, 300);
 
+        }
+
+        private void btnConnectToTSB_Click(object sender, EventArgs e)
+        {
+            tsb.execute(tsb.commands.hello, 400);
+        }
+
+        private void MainDisplay_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing || e.CloseReason == CloseReason.WindowsShutDown) 
+            {
+                saveSettings();
+            }
         }
     }
 }

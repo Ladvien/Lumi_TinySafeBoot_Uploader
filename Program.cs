@@ -39,7 +39,7 @@ namespace HM_1X_Aid_v01
 class SerialPortsExtended: SerialPort
 {
 
-    SerialPort ComPort = new SerialPort();
+    public SerialPort ComPort = new SerialPort();
 
     enum charsAfterRXTX : int { None = 0, LineFeed, CarriageReturn, CarriageReturnLineFeed, LineFeedCarriageReturn };
     
@@ -63,7 +63,7 @@ class SerialPortsExtended: SerialPort
 
     // Port setup.
     int readTimeout = 0;
-    int writeTimeout = 0;
+    int writeTimeout = 500;
 
     // Callback and event handler for passing serial data to the main object.
     public delegate void DataReceivedCallback(object sender, string data);
@@ -80,6 +80,7 @@ class SerialPortsExtended: SerialPort
     // Callback and event handler for passing serial data to the main object.
     public delegate void SerialSystemUpdate(object sender, string text, int progressBarValue);
     public event SerialSystemUpdate SerialSystemUpdateEventHandler;
+
 
     // Received data buffer.
     private string InputData = string.Empty;
@@ -99,7 +100,6 @@ class SerialPortsExtended: SerialPort
         ComPort.WriteTimeout = timeout;
         writeTimeout = timeout;
     }
-
 
     public List<string> getPortsList()
     {
@@ -130,7 +130,7 @@ class SerialPortsExtended: SerialPort
             ComPort.StopBits = (StopBits)Enum.Parse(typeof(StopBits), stopBits);
             ComPort.Handshake = (Handshake)Enum.Parse(typeof(Handshake), handshaking);
             ComPort.Parity = (Parity)Enum.Parse(typeof(Parity), parity);
-            ComPort.WriteTimeout = SerialPort.InfiniteTimeout;
+            ComPort.WriteTimeout = SerialPort.InfiniteTimeout ;
             ComPort.ReadTimeout = SerialPort.InfiniteTimeout;
             try
             {
@@ -352,7 +352,8 @@ class SerialPortsExtended: SerialPort
             try
             {
                 ComPort.Write(dataToWrite);
-                //Console.WriteLine("Data Sent: {0}", dataToWrite);
+                
+                Console.WriteLine("Data Sent: {0}", dataToWrite);
             }
             catch (TimeoutException ex)
             {
