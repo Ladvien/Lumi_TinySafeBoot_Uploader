@@ -66,21 +66,6 @@ class SerialPortsExtended: SerialPort
     int writeTimeout = 500;
 
     // Callback and event handler for passing serial data to the main object.
-    public delegate void DataReceivedCallback(object sender, string data);
-    public event DataReceivedCallback DataReceivedEventHandler;
-
-    // Callback and event handler for passing serial data to the main object.
-    public delegate void DataReceivedForTSBCallback(object sender, string data);
-    public event DataReceivedForTSBCallback DataReceivedForTSB;
-
-    // Callback and event handler for passing serial data to the main object.
-    public delegate void HM1Xupdated(object sender, object originator, object value);
-    public event HM1Xupdated HM1XupdatedEventHandler;
-
-    // Callback and event handler for passing serial data to the main object.
-    public delegate void SerialSystemUpdate(object sender, string text, int progressBarValue);
-    public event SerialSystemUpdate SerialSystemUpdateEventHandler;
-
 
     // Received data buffer.
     private string InputData = string.Empty;
@@ -120,7 +105,7 @@ class SerialPortsExtended: SerialPort
     // Open port using string identifiers.
     public void openPort(string port, string baudRate, string dataBits, string stopBits, string parity, string handshaking)
     {
-        SerialSystemUpdateHandler(this, "Trying port " + port + "\n", 0);
+
         // Open if port isn't and there is at least one port listed.
         if (portOpen == false && portList.Count > 0)
         {
@@ -140,15 +125,11 @@ class SerialPortsExtended: SerialPort
                 if (!dataHandlerAttached)
                 {
                     ComPort.Encoding = System.Text.Encoding.GetEncoding(28591);
-                    ComPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
-                    dataHandlerAttached = true;
                 }
-
-                SerialSystemUpdateHandler(this, ("Opened port " + port + "\r\n"), 100);
+                
             }
             catch (UnauthorizedAccessException ex)
             {
-                SerialSystemUpdateHandler(this, "Failed to open port " + port + "\r\n", 0);
                 MessageBox.Show(ex.Message);
             }
             portOpen = true;
@@ -159,17 +140,29 @@ class SerialPortsExtended: SerialPort
         }
     }
 
+    public string ReadExistingAsString()
+    {
+        return ComPort.ReadExisting();   
+    }
+
+    public int BytesToRead()
+    {
+        return ComPort.BytesToRead;
+    }
+
+    public int read(byte[] buffer, int offset, int count)
+    {
+        return ComPort.Read(buffer, offset, count);
+    }
+
     public void closePort()
     {
-        SerialSystemUpdateHandler(this, "Closing all ports.\r\n", 0);
         try
         {
             ComPort.Close();
             portOpen = false;
-            SerialSystemUpdateHandler(this, "Closed all ports.\r\n", 100);
         }
         catch (UnauthorizedAccessException ex) { MessageBox.Show(ex.Message);
-            SerialSystemUpdateHandler(this, "Failed to close port(s).\r\n", 100);
         }
     }
 
@@ -299,49 +292,6 @@ class SerialPortsExtended: SerialPort
             connectionLabel.Text = "Connected";
             connectionLabel.BackColor = Color.LimeGreen;
         }
-    }
-
-    // Read Data.
-    private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
-    {
-        // Gets incoming data from open port and passes it to a handler.
-        InputData = ComPort.ReadExisting();
-        //Console.WriteLine("RXed: {0}", InputData);
-        
-        // If not empty and we want to foreit capture to delegate.
-        if (InputData != String.Empty && captureStream == false)
-        {
-            try
-            {
-                this.DataReceivedEventHandler(this, InputData);
-            }
-            catch (UnauthorizedAccessException ex) { MessageBox.Show(ex.Message); }
-        } else if (InputData != String.Empty && captureStream == true)
-        {
-            try
-            {
-                this.DataReceivedForTSB(this, InputData);
-            }
-            catch (UnauthorizedAccessException ex) { MessageBox.Show(ex.Message); }
-            captureBuffer = InputData;
-            //Console.WriteLine("Debug1: {0}", captureBuffer);
-            captureBuffer = "";
-        }
-        else
-        {
-            // We retain capture. 
-            captureBuffer = InputData;
-        }
-    }
-
-
-
-    private void SerialSystemUpdateHandler(object sender, string text, int progressBarValue)
-    {
-        try
-        {
-            this.SerialSystemUpdateEventHandler(this, text, progressBarValue);
-        } catch (UnauthorizedAccessException ex) { MessageBox.Show(ex.Message); }
     }
 
     //Write Data

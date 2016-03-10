@@ -41,6 +41,7 @@ namespace HM_1X_Aid_v01
         // TinySafeBootloader
         private tsb tsb = new tsb();
         tsb.commands commands = new tsb.commands();
+        
 
         OpenFileDialog hexFile = new OpenFileDialog();
 
@@ -60,19 +61,17 @@ namespace HM_1X_Aid_v01
             // Populate COM info.
             loadCOMInfo();
 
-            // RX'ed data callback.
-            serialPorts.DataReceivedEventHandler += new SerialPortsExtended.DataReceivedCallback(gotData);
-            serialPorts.SerialSystemUpdateEventHandler += new SerialPortsExtended.SerialSystemUpdate(serialSystemUpdate);
-            tsb.TsbConnectedEventHandler += new tsb.TsbConnected(tsbConnected);
-
             // Setup display.
             lblConnectionStatus.BackColor = Color.Red;
             ltbTSB.Enabled = false;
 
             tsb.init(serialPorts, rtbMainDisplay, pbSysStatus);
+
+            tsb.TsbConnectedEventHandler += new tsb.TsbConnected(tsbConnected);
+
         }
 
-        private void tsbConnected(object sender, bool isConnected)
+        private void tsbConnected(bool isConnected)
         {
             // 1. Check to make sure not crossing threading.
             // 2. Update TSB connection status.
@@ -80,7 +79,7 @@ namespace HM_1X_Aid_v01
             // 1
             if (ltbTSB.InvokeRequired)
             {
-                ltbTSB.Invoke(new Action<object, bool>(tsbConnected), new object[] { sender, isConnected });
+                ltbTSB.Invoke(new Action<bool>(tsbConnected), new object[] { isConnected });
                 return;
             }
 
@@ -165,7 +164,6 @@ namespace HM_1X_Aid_v01
             // Incoming data is on another thread UI cannot be updated without crashing.
             tempBuffer = data;
             this.BeginInvoke(new SetTextCallback(SetText), new object[] { tempBuffer });
-            tsb.gotData(sender, data);
         }
 
         public void serialSystemUpdate(object sender, string text, int progressBarValue)
@@ -520,13 +518,14 @@ namespace HM_1X_Aid_v01
 
         private void btnReadHexFile_Click(object sender, EventArgs e)
         {
-            tsb.execute(tsb.commands.readFlash, 300);
-
+            tsb.readFlash();
+            
         }
 
         private void btnConnectToTSB_Click(object sender, EventArgs e)
         {
-            tsb.execute(tsb.commands.hello, 400);
+            tsbConnected(false);
+            tsb.helloProcessing();
         }
 
         private void MainDisplay_FormClosing(object sender, FormClosingEventArgs e)

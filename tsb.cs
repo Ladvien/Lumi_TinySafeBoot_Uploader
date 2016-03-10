@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Reflection;
 
+
 namespace Lumi_Uploader_for_TinySafeBoot
 {
     class tsb
     {
-        public delegate void TsbConnected(object sender, bool tsbConnectionStatus);
+        public delegate void TsbConnected(bool tsbConnectionStatus);
         public event TsbConnected TsbConnectedEventHandler;
 
         // Create serial command timeout timer.
@@ -41,7 +42,8 @@ namespace Lumi_Uploader_for_TinySafeBoot
 
         // Flash Read Buffer
         byte[] readFlashBuffer = { 0 };
-        int readFlashPageIndex = 0;
+
+        string rxBufferAsString;
 
         commands commandInProgress = new commands();
 
@@ -49,18 +51,11 @@ namespace Lumi_Uploader_for_TinySafeBoot
         RichTextBox mainDisplay;
         ProgressBar progressBar;
 
-        public string readFlash(SerialPortsExtended serialPort)
-        {
-            return "";
-        } 
-
         public void init(SerialPortsExtended serialPortMain, RichTextBox mainDisplayMain, ProgressBar mainProgressBar)
         {
             serialPorts = serialPortMain;
             mainDisplay = mainDisplayMain;
-            serialPorts.DataReceivedForTSB += new SerialPortsExtended.DataReceivedForTSBCallback(gotData);
             progressBar = mainProgressBar;
-
         }
 
 
@@ -108,106 +103,18 @@ namespace Lumi_Uploader_for_TinySafeBoot
             return commandsAsStrings[(int)commandNumber];
         }
 
-        public void execute(commands commandNumber, int timer)
-        {
-            // 1. Update actionInProgress
-            // 2. Set write timeout callback.
-            // 3. Capture the serial stream.
-            // 4. Write command to serial port.
-
-            if (mainDisplay.InvokeRequired)
-            {
-                mainDisplay.Invoke(new Action<commands, int>(execute), new object[] { commandNumber, timer });
-                return;
-            }
-            updateActionInProgress(commandNumber);
-            //setCommandTimer(timer);
-            serialPorts.setCaptureStream(true);
-            serialPorts.WriteData(commandsAsStrings[(int)commandNumber]);
-            if((int)commandNumber == 4)
-            {
-                serialPorts.WriteData("!");
-            }
-        }
-
         public void updateActionInProgress(commands commandNumber)
         {
             commandInProgress = commandNumber;
         }
 
-        // Read Data.
-        public void gotData(object sender, string data)
+        public void helloProcessing()
         {
-            // 1. Disable commandTimmer
-            // 2. Switch to command in progress.
-            if(tsbCommandTimer != null )//|| tsbCommandTimer.Enabled == true)
-            {
-                tsbCommandTimer.Enabled = false;
-            }
-
-            rxBuffer += data;
-            Console.WriteLine(data);
-            Console.WriteLine(rxBuffer.Length);
-
-            switch (commandInProgress)
-            {
-                case commands.hello:
-                    updateActionInProgress(commandInProgress);
-                    helloProcessing();
-                    break;
-                case commands.readFlash:
-                    updateActionInProgress(commandInProgress);
-                    //execute(commands.readFlash, 700);
-                    //execute(commands.confirm, 700);
-                    readFlash();
-                    break;
-                case commands.error:
-                    Console.WriteLine("Error!!");
-                    break;
-                default:
-                    Console.WriteLine("Error while checking command progress.");
-                    break;
-            }
-            
-
-        }
-
-        private void setCommandTimer(int milliseconds)
-        {
-            // 1. Set a timer for response on a TSB command.
-            // 2. Add callback method.
-            // 3. Define timer behaviors.
-            //Console.WriteLine("Set timer for {0}ms", milliseconds);
-            if(milliseconds > 0)
-            {
-                // Create a timer with a x second interval.
-                tsbCommandTimer = new System.Timers.Timer(milliseconds);
-                // Hook up the Elapsed event for the timer. 
-                tsbCommandTimer.Elapsed += tsbCommandTimerTimeout;
-                tsbCommandTimer.AutoReset = false;
-                tsbCommandTimer.Enabled = true;
-            }
-        }
-
-        private void tsbCommandTimerTimeout(object source, EventArgs e)
-        {
-            if(commandAttemptsIndex < commandAttempts)
-            {
-                //execute(commandInProgress, 500);
-                commandAttemptsIndex++;
-            } else
-            {
-                commandAttemptsIndex = 0;
-            }
-
-            tsbCommandTimer.Enabled = false;
-            serialPorts.setCaptureStream(false);
-            Console.WriteLine("Timer expired");
-        }
-
-
-        private void helloProcessing()
-        {
+            // 1. Try handshake ("@@@") three times; or continue if successful.
+            // 2. Check if reply seems valid(ish).
+            // 3. Chop up the reply into useful device data.
+            // 4. Save the device data for later.
+            // 5. If not reply, let the user know it was a fail.
 
             int[] firmwareDatePieces = { 0x00, 0x00 };
             int firmwareStatus = 0x00;
@@ -216,12 +123,16 @@ namespace Lumi_Uploader_for_TinySafeBoot
             int[] freeFlash = { 0x00, 0x00 };
             int[] eepromSize = { 0x00, 0x00 };
 
-            if (rxBuffer.Length < 15)
+            for(int i = 0; i < 3; i++)
             {
+                serialPorts.WriteData("@@@");
+                System.Threading.Thread.Sleep(50);
+                rxBuffer = serialPorts.ReadExistingAsString();
+                if(rxBuffer.Length > 0) { break; }
+            }
 
-                Console.WriteLine(rxBuffer);
-                //Console.WriteLine(rxBuffer.Length);
-            } else if (rxBuffer.Contains("tsb") || rxBuffer.Contains("TSB") && rxBuffer.Length == 17)
+            // ATtiny have all lower case, ATMega have upper case.  Not sure if it's expected.
+            if (rxBuffer.Contains("tsb") || rxBuffer.Contains("TSB") && rxBuffer.Length == 17)
             {
                 Console.WriteLine(rxBuffer.Length);
                 byte[] tsbGreetingBytes = Encoding.Default.GetBytes(rxBuffer);
@@ -274,59 +185,45 @@ namespace Lumi_Uploader_for_TinySafeBoot
                     + "\nEEPROM size:\t " + eeprom + "\n",
                     System.Drawing.Color.LightBlue);
 
-                serialPorts.setCaptureStream(false);
-                flushRxBuffer();
                 commandInProgress = commands.none;
-                TsbConnectedEventHandler(this, true);
+                setTsbConnectionSafely(true);
+            } else
+            {
+                mainDisplay.AppendText("Could not handshake with TSB. Please reset and try again.\n", System.Drawing.Color.Crimson);
             }
         }
 
-
-
-        private void readFlash()
+        public void readFlash()
         {
-            // 1. Read incoming data until CF ('!') count is higher than readFlashPageIndex.
-            // 2. Create a new byte array from the string rxBuffer
-            // 3. Send another read flash command.
-            // 4. When readFlashPageIndex is exceeded...
+            
+            // 1. Write read Flash command.
+            // 2. Get first page by sending confirmation ("!").
+            // 3. Continue to get data until buffer is full.
 
-            //if(rxBuffer.Length < pageSize)
-            if(rxBuffer.Length < 64)
+            string localStringBuffer = "";
+
+            // Start this thing
+            serialPorts.WriteData(commandsAsStrings[(int)commands.readFlash]);
+            System.Threading.Thread.Sleep(50);
+            
+            int pageIndex = 0;
+            // Get all bytes in a page.
+            while (pageIndex < numberOfPages)
             {
-                serialPorts.WriteData("!");
-                //execute(commands.confirm, 500);
-                return;
-            } else if (readFlashPageIndex < numberOfPages)
-            {
-                Console.WriteLine(numberOfPages);
-                byte[] page = Encoding.Default.GetBytes(rxBuffer.Substring(0, 63));
-                if (rxBuffer.Length > 63)
-                {
-                    rxBuffer = rxBuffer.Substring(64, (rxBuffer.Length - 64));
-                    readFlashBuffer.Concat(page);
-                }
-
-                if (progressBar.InvokeRequired)
-                {
-                    
-                }
-
-                //readFlashBuffer = encoding.default.getbytes(rxbuffer);
-                //setMainDisplayTextSafely("\npage #: " + readFlashPageIndex + "\n", System.Drawing.Color.AliceBlue);
-                //setMainDisplayTextSafely(rxBuffer + "\n", System.Drawing.Color.LimeGreen);
-                flushRxBuffer();
-
-                readFlashPageIndex++;
-                serialPorts.WriteData("!");
-                //execute(commands.confirm, 500);
+                serialPorts.WriteData(commandsAsStrings[(int)commands.confirm]);
+                System.Threading.Thread.Sleep(150);
+                localStringBuffer += serialPorts.ReadExistingAsString();
+                Console.WriteLine("Chars: {0}  pageIndex: {1}  numberOfPages: {2}", localStringBuffer.Length, pageIndex, numberOfPages);
+                pageIndex++;
             }
-        
-            else
-            {
-                setMainDisplayTextSafely("Total bytes of flash read: " + readFlashBuffer.Length, System.Drawing.Color.Red);
-                readFlashPageIndex = 0;
-                displayFlashReadBuffer();
-            }
+
+            //Console.WriteLine(localStringBuffer.Length);
+            //parseRawRead(localStringBuffer);
+            byte[] flashReadByteArray = convertFlashReadStringToByteArray(localStringBuffer);
+            parseAndPrintRawRead(flashReadByteArray);
+            //mainDisplay.AppendText(serialPorts.convertASCIIStringToHexString(GetString(smallBit)), System.Drawing.Color.LimeGreen);
+            Console.WriteLine(flashReadByteArray.Length);
+            
         }
 
 
@@ -334,10 +231,10 @@ namespace Lumi_Uploader_for_TinySafeBoot
         {
             if (mainDisplay.InvokeRequired)
             {
-                TsbConnectedEventHandler.Invoke(this, tsbConnection);
+                TsbConnectedEventHandler.Invoke(tsbConnection);
                 return;
             }
-            TsbConnectedEventHandler.Invoke(this, tsbConnection);
+            TsbConnectedEventHandler.Invoke(tsbConnection);
         }
 
         private void setMainDisplayTextSafely(string text, System.Drawing.Color color)
@@ -371,17 +268,71 @@ namespace Lumi_Uploader_for_TinySafeBoot
                 return;
             }
 
-            int index = 0;
 
-            while(index < rxBuffer.Length)
+            // 
+            mainDisplay.AppendText(rxBuffer);
+        }
+
+        public string[] parseRawRead(string rawFlashRead)
+        {
+            int numberOfPagesRead = (rawFlashRead.Length / pageSize);
+            string[] processedFlashRead = new string[numberOfPagesRead*pageSize];
+
+            int pageIndex = 0;
+
+            while(pageIndex < numberOfPagesRead)
             {
-                for(int i = 0; i < 8; i++)
-                {
-                    mainDisplay.Text += (Encoding.UTF8.GetString(readFlashBuffer, 0, index));
-                    index += 8;
-                }
-
+                processedFlashRead[pageIndex] = rawFlashRead.Substring(pageIndex * pageSize, pageSize);
+                pageIndex++;            
             }
+
+            pageIndex = 0;
+            while(pageIndex < numberOfPagesRead)
+            {
+                mainDisplay.AppendText(processedFlashRead[pageIndex]+"\n", System.Drawing.Color.LimeGreen);
+            }
+
+            return processedFlashRead;
+        }
+
+        public void parseAndPrintRawRead(byte[] rawFlashRead)
+        {
+            int numberOfPagesRead = (rawFlashRead.Length / pageSize);
+            //byte[,] processedFlashRead = new byte[numberOfPagesRead, pageSize];
+            byte[] pageByteArray = new byte[pageSize];
+
+            for(int i = 0; i < numberOfPagesRead; i++)
+            {
+                for(int j = 0; j < pageSize/8; j++)
+                {
+                    Array.Copy(rawFlashRead, (i * pageSize) + (j*8), pageByteArray,0, 8);
+                }
+                mainDisplay.AppendText(GetString(pageByteArray));
+            }
+            //Array.Copy(rawFlashRead, );
+           
+        }
+
+        public byte[] convertFlashReadStringToByteArray(string rawFlashReadString)
+        {
+            return GetBytes(rawFlashReadString);
+        }
+
+        static byte[] GetBytes(string str)
+        {
+            byte[] bytes = new byte[str.Length * sizeof(byte)];
+            System.Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
+            return bytes;
+        }
+
+        static string GetString(byte[] bytes)
+        {
+            char[] chars = new char[bytes.Length / sizeof(byte)];
+            System.Buffer.BlockCopy(bytes, 0, chars, 0, bytes.Length);
+            return new string(chars);
         }
     }
+
+
+
 }
