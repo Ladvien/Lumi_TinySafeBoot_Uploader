@@ -167,8 +167,8 @@ namespace Lumi_Uploader_for_TinySafeBoot
                 string pageSizeString = (pagesizeInWords * 2).ToString();
 
                 // REPLACE WITH DEVICE INFO
-                numberOfPages = 32768 / pageSize;
-
+                //numberOfPages = 32768 / pageSize;
+                numberOfPages = 16;
                 // Get flash size.
                 flashSize = ((freeFlash[1] << 8) | freeFlash[0])*2;
                 string flashLeft = flashSize.ToString();
@@ -177,12 +177,13 @@ namespace Lumi_Uploader_for_TinySafeBoot
                 fullEepromSize = ((eepromSize[1] << 8) | eepromSize[0])+1;
                 string eeprom = fullEepromSize.ToString();
 
-                setMainDisplayTextSafely("Firmware Date:\t" + firmwareDateString
-                    + "\nStatus:\t\t" + firmwareStatus.ToString("X2")
-                    + "\nSignature:\t\t" + deviceSignature
-                    + "\nPage Size:\t\t" + pageSizeString
-                    + "\nFlash Free:\t\t" + flashLeft
-                    + "\nEEPROM size:\t " + eeprom + "\n",
+                setMainDisplayTextSafely(
+                    "Firmware Date:" + firmwareDateString
+                    + "\nStatus:       " + firmwareStatus.ToString("X2")
+                    + "\nSignature:    " + deviceSignature
+                    + "\nPage Size:    " + pageSizeString
+                    + "\nFlash Free:   " + flashLeft
+                    + "\nEEPROM size:  " + eeprom + "\n",
                     System.Drawing.Color.LightBlue);
 
                 commandInProgress = commands.none;
@@ -219,6 +220,7 @@ namespace Lumi_Uploader_for_TinySafeBoot
 
             //Console.WriteLine(localStringBuffer.Length);
             //parseRawRead(localStringBuffer);
+            //string flashReadAsHexString = serialPorts.convertHexStringToASCIIHex(localStringBuffer);
             byte[] flashReadByteArray = convertFlashReadStringToByteArray(localStringBuffer);
             parseAndPrintRawRead(flashReadByteArray);
             //mainDisplay.AppendText(serialPorts.convertASCIIStringToHexString(GetString(smallBit)), System.Drawing.Color.LimeGreen);
@@ -297,17 +299,26 @@ namespace Lumi_Uploader_for_TinySafeBoot
 
         public void parseAndPrintRawRead(byte[] rawFlashRead)
         {
+            string fileName = "Lumi_Up_output.hex";
+            
+            ByteArrayToFile(fileName, rawFlashRead);
             int numberOfPagesRead = (rawFlashRead.Length / pageSize);
             //byte[,] processedFlashRead = new byte[numberOfPagesRead, pageSize];
             byte[] pageByteArray = new byte[pageSize];
+            const int lineSize = 8;
 
             for(int i = 0; i < numberOfPagesRead; i++)
             {
-                for(int j = 0; j < pageSize/8; j++)
+                for(int j = 0; j < lineSize+1; j++)
                 {
-                    Array.Copy(rawFlashRead, (i * pageSize) + (j*8), pageByteArray,0, 8);
+                    byte[] lineByteArray = new byte[lineSize];
+                    int chunkSize = ((i * pageSize) + (j * lineSize));
+                    //pageByteArray = rawFlashRead.Skip(i * pageSize + j * lineSize/2).Take(j/2).ToArray();
+                    Buffer.BlockCopy(rawFlashRead, chunkSize, lineByteArray, 0, j / sizeof(UInt32));
+                    mainDisplay.AppendText(chunkSize.ToString("X6")+": ", System.Drawing.Color.Yellow);
+                    mainDisplay.AppendText(tsb.ByteArrayToString(lineByteArray) + "\n", System.Drawing.Color.LimeGreen);
                 }
-                mainDisplay.AppendText(GetString(pageByteArray));
+                mainDisplay.AppendText("\n\t\tPage #: "+i + "\n\n", System.Drawing.Color.Yellow);
             }
             //Array.Copy(rawFlashRead, );
            
@@ -331,8 +342,42 @@ namespace Lumi_Uploader_for_TinySafeBoot
             System.Buffer.BlockCopy(bytes, 0, chars, 0, bytes.Length);
             return new string(chars);
         }
-    }
 
+        public bool ByteArrayToFile(string _FileName, byte[] _ByteArray)
+        {
+            try
+            {
+                // Open file for reading
+                System.IO.FileStream _FileStream =
+                   new System.IO.FileStream(_FileName, System.IO.FileMode.Create,
+                                            System.IO.FileAccess.Write);
+                // Writes a block of bytes to this stream using data from
+                // a byte array.
+                _FileStream.Write(_ByteArray, 0, _ByteArray.Length);
+                
 
+                // close file stream
+                _FileStream.Close();
 
-}
+                return true;
+            }
+            catch (Exception _Exception)
+            {
+                // Error
+                Console.WriteLine("Exception caught in process: {0}",
+                                  _Exception.ToString());
+            }
+
+            // error occured, return false
+            return false;
+        }
+
+        public static string ByteArrayToHexString(byte[] ba)
+        {
+            string hex = BitConverter.ToString(ba);
+            hex = hex.Replace("0x0", "0x00");
+            return hex.Replace("-", "");
+        }
+
+    } // End of Class
+} // End of Namespace

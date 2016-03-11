@@ -132,7 +132,7 @@
             // 
             this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(74, 4);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
             // mnuMainMenu
             // 
@@ -728,7 +728,7 @@
             this.ltbTSB.ColumnCount = 3;
             this.ltbTSB.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 31.61222F));
             this.ltbTSB.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 68.38778F));
-            this.ltbTSB.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 380F));
+            this.ltbTSB.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 381F));
             this.ltbTSB.Controls.Add(this.label9, 0, 2);
             this.ltbTSB.Controls.Add(this.label10, 0, 1);
             this.ltbTSB.Controls.Add(this.rtbHexFilePath, 1, 1);
@@ -779,7 +779,7 @@
             this.rtbHexFilePath.Name = "rtbHexFilePath";
             this.rtbHexFilePath.ReadOnly = true;
             this.rtbHexFilePath.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
-            this.rtbHexFilePath.Size = new System.Drawing.Size(383, 34);
+            this.rtbHexFilePath.Size = new System.Drawing.Size(382, 34);
             this.rtbHexFilePath.TabIndex = 2;
             this.rtbHexFilePath.Text = "None";
             // 
@@ -788,7 +788,7 @@
             this.btnOpenFile.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnOpenFile.Location = new System.Drawing.Point(182, 3);
             this.btnOpenFile.Name = "btnOpenFile";
-            this.btnOpenFile.Size = new System.Drawing.Size(383, 34);
+            this.btnOpenFile.Size = new System.Drawing.Size(382, 34);
             this.btnOpenFile.TabIndex = 3;
             this.btnOpenFile.Text = "Open Hex File";
             this.btnOpenFile.UseVisualStyleBackColor = true;
@@ -800,7 +800,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btnWriteHexFile.Location = new System.Drawing.Point(182, 123);
             this.btnWriteHexFile.Name = "btnWriteHexFile";
-            this.btnWriteHexFile.Size = new System.Drawing.Size(383, 36);
+            this.btnWriteHexFile.Size = new System.Drawing.Size(382, 36);
             this.btnWriteHexFile.TabIndex = 1;
             this.btnWriteHexFile.Text = "Write File";
             this.btnWriteHexFile.UseVisualStyleBackColor = true;
@@ -811,9 +811,9 @@
             this.btnReadHexFile.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnReadHexFile.Location = new System.Drawing.Point(571, 123);
+            this.btnReadHexFile.Location = new System.Drawing.Point(570, 123);
             this.btnReadHexFile.Name = "btnReadHexFile";
-            this.btnReadHexFile.Size = new System.Drawing.Size(375, 36);
+            this.btnReadHexFile.Size = new System.Drawing.Size(376, 36);
             this.btnReadHexFile.TabIndex = 4;
             this.btnReadHexFile.Text = "Read File";
             this.btnReadHexFile.UseVisualStyleBackColor = true;
@@ -826,7 +826,7 @@
             this.cmbChip.FormattingEnabled = true;
             this.cmbChip.Location = new System.Drawing.Point(182, 83);
             this.cmbChip.Name = "cmbChip";
-            this.cmbChip.Size = new System.Drawing.Size(383, 28);
+            this.cmbChip.Size = new System.Drawing.Size(382, 28);
             this.cmbChip.TabIndex = 7;
             // 
             // tableLayoutPanel4
@@ -901,7 +901,7 @@
             // 
             this.rtbMainDisplay.BackColor = System.Drawing.SystemColors.Desktop;
             this.rtbMainDisplay.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rtbMainDisplay.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rtbMainDisplay.Font = new System.Drawing.Font("Courier New", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rtbMainDisplay.ForeColor = System.Drawing.Color.Lime;
             this.rtbMainDisplay.Location = new System.Drawing.Point(3, 3);
             this.rtbMainDisplay.Name = "rtbMainDisplay";

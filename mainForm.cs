@@ -183,7 +183,7 @@ namespace HM_1X_Aid_v01
             {
                 // HEX.
                 case 0:
-                    result = serialPorts.convertASCIIStringToHexString(text);
+                    result = serialPorts.convertASCIIStringToHexString(text, true);
                     break;
                 // String.
                 case 1:
@@ -436,7 +436,7 @@ namespace HM_1X_Aid_v01
 
             if (toggleSendBoxStringHex)
             {
-                result = serialPorts.convertASCIIStringToHexString(txbSendTextBox.Text);
+                result = serialPorts.convertASCIIStringToHexString(txbSendTextBox.Text, true);
                 toggleSendBoxStringHex = false;
                 btnToggleStringHexSendText.Text = "Hex";
                 txbSendTextBox.BackColor = Color.Black;

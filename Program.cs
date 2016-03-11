@@ -330,7 +330,7 @@ class SerialPortsExtended: SerialPort
     }
 
     // Mutate data
-    public string convertASCIIStringToHexString(string text)
+    public string convertASCIIStringToHexString(string text, bool extended)
     {
         string result = "";
         // Replace the string "NULL" with an actual ASCII null.
@@ -343,7 +343,15 @@ class SerialPortsExtended: SerialPort
                 // Get the integral value of the character.
                 int value = Convert.ToInt32(letter);
                 // Convert the decimal value to a hexadecimal value in string form.
-                string hexOutput = string.Format("0x{0:X2} ", value);
+                string hexOutput = "";
+                if(extended == true)
+                {
+                    hexOutput = string.Format("0x{0:X2} ", value);
+                } else
+                {
+                    hexOutput = string.Format("0x{0:X} ", value);
+                }
+                
                 result += hexOutput;
             }
 
