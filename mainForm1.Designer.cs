@@ -61,7 +61,7 @@ namespace Lumi_Uploader_for_TinySafeBoot {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Point similar to {X=17,Y=17}.
+        ///   Looks up a localized resource of type System.Drawing.Point similar to {X=204,Y=17}.
         /// </summary>
         public static System.Drawing.Point contextMenuStrip1_TrayLocation {
             get {
@@ -71,42 +71,12 @@ namespace Lumi_Uploader_for_TinySafeBoot {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap copyToolStripMenuItem_Image {
-            get {
-                object obj = ResourceManager.GetObject("copyToolStripMenuItem.Image", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap cutToolStripMenuItem_Image {
-            get {
-                object obj = ResourceManager.GetObject("cutToolStripMenuItem.Image", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Point similar to {X=234,Y=17}.
+        ///   Looks up a localized resource of type System.Drawing.Point similar to {X=17,Y=17}.
         /// </summary>
         public static System.Drawing.Point mnuMainMenu_TrayLocation {
             get {
                 object obj = ResourceManager.GetObject("mnuMainMenu.TrayLocation", resourceCulture);
                 return ((System.Drawing.Point)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap newToolStripMenuItem_Image {
-            get {
-                object obj = ResourceManager.GetObject("newToolStripMenuItem.Image", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -117,56 +87,6 @@ namespace Lumi_Uploader_for_TinySafeBoot {
             get {
                 object obj = ResourceManager.GetObject("ofdHexFile.TrayLocation", resourceCulture);
                 return ((System.Drawing.Point)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap openToolStripMenuItem_Image {
-            get {
-                object obj = ResourceManager.GetObject("openToolStripMenuItem.Image", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap pasteToolStripMenuItem_Image {
-            get {
-                object obj = ResourceManager.GetObject("pasteToolStripMenuItem.Image", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap printPreviewToolStripMenuItem_Image {
-            get {
-                object obj = ResourceManager.GetObject("printPreviewToolStripMenuItem.Image", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap printToolStripMenuItem_Image {
-            get {
-                object obj = ResourceManager.GetObject("printToolStripMenuItem.Image", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap saveToolStripMenuItem_Image {
-            get {
-                object obj = ResourceManager.GetObject("saveToolStripMenuItem.Image", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

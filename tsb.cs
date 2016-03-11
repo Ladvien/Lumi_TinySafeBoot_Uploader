@@ -7,15 +7,136 @@ using System.Windows.Forms;
 using System.Reflection;
 
 
+
 namespace Lumi_Uploader_for_TinySafeBoot
 {
     class tsb
     {
+        #region devices
+        enum ATMEL_DEVICE
+        {
+            ATMEGA_328P = 0,
+            ATTINY_13A = 1,
+            ATTINY_13 = 2,
+            ATTINY_1634 = 3,
+            ATTINY_167 = 4,
+            ATTINY_2313A = 5,
+            ATTINY_2313 = 6,
+            ATTINY_24A = 7,
+            ATTINY_24 = 8,
+            ATTINY_25 = 9,
+            ATTINY_261A = 10,
+            ATTINY_261 = 11,
+            ATTINY_4313 = 12,
+            ATTINY_44A = 13,
+            ATTINY_44 = 14,
+            ATTINY_441 = 15,
+            ATTINY_45 = 16,
+            ATTINY_461A = 17,
+            ATTINY_461 = 18,
+            ATTINY_48 = 19,
+            ATTINY_84A = 20,
+            ATTINY_84 = 21,
+            ATTINY_841 = 22,
+            ATTINY_85 = 23,
+            ATTINY_861A = 24,
+            ATTINY_861 = 25,
+            ATTINY_87 = 26,
+            ATTINY_88 = 27,
+            ATMEGA_162 = 28,
+            ATMEGA_164A = 29,
+            ATMEGA_164PA = 30,
+            ATMEGA_164P = 31,
+            ATMEGA_165A = 32,
+            ATMEGA_165PA = 33,
+            ATMEGA_165P = 34,
+            ATMEGA_168A = 35,
+            ATMEGA_168 = 36,
+            ATMEGA_168PA = 37,
+            ATMEGA_168P = 38,
+            ATMEGA_169A = 39,
+            ATMEGA_169PA = 40,
+            ATMEGA_169P = 41,
+            ATMEGA_16A = 42,
+            ATMEGA_16 = 43,
+            ATMEGA_16HVA = 44,
+            ATMEGA_16HVB = 45,
+            ATMEGA_16ATMEGA_1 = 46,
+            ATMEGA_16U2 = 47,
+            ATMEGA_16U4 = 48,
+            ATMEGA_324A = 49,
+            ATMEGA_324PA = 50,
+            ATMEGA_324P = 51,
+            ATMEGA_3250A = 52,
+            ATMEGA_3250 = 53,
+            ATMEGA_3250PA = 54,
+            ATMEGA_3250P = 55,
+            ATMEGA_325A = 56,
+            ATMEGA_325 = 57,
+            ATMEGA_325PA = 58,
+            ATMEGA_325P = 59,
+            ATMEGA_328 = 60,
+            //ATMEGA_328P = 61,
+            ATMEGA_3290A = 62,
+            ATMEGA_3290 = 63,
+            ATMEGA_3290PA = 64,
+            ATMEGA_3290P = 65,
+            ATMEGA_329A = 66,
+            ATMEGA_329 = 67,
+            ATMEGA_329PA = 68,
+            ATMEGA_329P = 69,
+            ATMEGA_32A = 70,
+            ATMEGA_32C1 = 71,
+            ATMEGA_32 = 72,
+            ATMEGA_32HVB = 73,
+            ATMEGA_32ATMEGA_1 = 74,
+            ATMEGA_32U2 = 75,
+            ATMEGA_32U4 = 76,
+            ATMEGA_406 = 77,
+            ATMEGA_48A = 78,
+            ATMEGA_48 = 79,
+            ATMEGA_48PA = 80,
+            ATMEGA_48P = 81,
+            ATMEGA_640 = 82,
+            ATMEGA_644A = 83,
+            ATMEGA_644 = 84,
+            ATMEGA_644PA = 85,
+            ATMEGA_644P = 86,
+            ATMEGA_6450A = 87,
+            ATMEGA_6450 = 88,
+            ATMEGA_6450P = 89,
+            ATMEGA_645A = 90,
+            ATMEGA_645 = 91,
+            ATMEGA_645P = 92,
+            ATMEGA_6490A = 93,
+            ATMEGA_6490 = 94,
+            ATMEGA_6490P = 95,
+            ATMEGA_649A = 96,
+            ATMEGA_649 = 97,
+            ATMEGA_649P = 98,
+            ATMEGA_64C1 = 99,
+            ATMEGA_64ATMEGA_1 = 100,
+            ATMEGA_64RFR2 = 101,
+            ATMEGA_8515 = 102,
+            ATMEGA_8535 = 103,
+            ATMEGA_88A = 104,
+            ATMEGA_88 = 105,
+            ATMEGA_88PA = 106,
+            ATMEGA_88P = 107,
+            ATMEGA_8A = 108,
+            ATMEGA_8 = 109,
+            ATMEGA_8HVA = 110,
+            ATMEGA_8U2 = 111
+        };
+
+        enum ATMEL_SIGNATURE_BYTES
+        {
+        }
+        #endregion devices
+
+
         public delegate void TsbConnected(bool tsbConnectionStatus);
         public event TsbConnected TsbConnectedEventHandler;
-
-        // Create serial command timeout timer.
-        private static System.Timers.Timer tsbCommandTimer;
 
         // Connected to TSB.
         private bool tsbConnected = false;
@@ -43,8 +164,6 @@ namespace Lumi_Uploader_for_TinySafeBoot
         // Flash Read Buffer
         byte[] readFlashBuffer = { 0 };
 
-        string rxBufferAsString;
-
         commands commandInProgress = new commands();
 
         SerialPortsExtended serialPorts;
@@ -56,6 +175,7 @@ namespace Lumi_Uploader_for_TinySafeBoot
             serialPorts = serialPortMain;
             mainDisplay = mainDisplayMain;
             progressBar = mainProgressBar;
+            
         }
 
 
@@ -176,13 +296,13 @@ namespace Lumi_Uploader_for_TinySafeBoot
                 string eeprom = fullEepromSize.ToString();
 
                 mainDisplay.AppendText(
-                    "Firmware Date:" + firmwareDateString
-                    + "\nStatus:       " + firmwareStatus.ToString("X2")
-                    + "\nSignature:    " + deviceSignature
-                    + "\nPage Size:    " + pageSizeString
-                    + "\nFlash Free:   " + flashLeft
-                    + "\nEEPROM size:  " + eeprom + "\n",
-                    System.Drawing.Color.LightBlue);
+                      "Firmware Date:  " + firmwareDateString
+                    + "\nStatus:         " + firmwareStatus.ToString("X2")
+                    + "\nSignature:      " + deviceSignature
+                    + "\nPage Size:      " + pageSizeString
+                    + "\nFlash Free:     " + flashLeft
+                    + "\nEEPROM size:    " + eeprom + "\n",
+                    System.Drawing.Color.White);
 
                 commandInProgress = commands.none;
                 setTsbConnectionSafely(true);
@@ -198,6 +318,8 @@ namespace Lumi_Uploader_for_TinySafeBoot
             // 2. Get first page by sending confirmation ("!").
             // 3. Continue to get data until buffer is full.
             // 4. Write monoline string to file.
+            // 5. Check the dogear of the page (bottom  corner bytes)
+            //    if last two bytes are FF FF, then break, as end of Flash.
             // 5. Print out formatted string to display.
 
             string localStringBuffer = "";
@@ -210,11 +332,14 @@ namespace Lumi_Uploader_for_TinySafeBoot
             // Get all bytes in a page.
             while (pageIndex < numberOfPages)
             {
-                serialPorts.WriteData(commandsAsStrings[(int)commands.confirm]);
-                System.Threading.Thread.Sleep(150);
-                localStringBuffer += serialPorts.ReadExistingAsString();
+                localStringBuffer += getPage();
                 Console.WriteLine("Chars: {0}  pageIndex: {1}  numberOfPages: {2}", localStringBuffer.Length, pageIndex, numberOfPages);
                 pageIndex++;
+                if (localStringBuffer[localStringBuffer.Length - 1] == 0xFF &&
+                    localStringBuffer[localStringBuffer.Length - 1] == 0xFF)
+                {   localStringBuffer += getPage();
+                    break;
+                }
             }
 
             string fileName = "Lumi_Up_output.hex";
@@ -222,6 +347,13 @@ namespace Lumi_Uploader_for_TinySafeBoot
             int[] flashReadByteArray = getIntArrayFromString(localStringBuffer);
             parseAndPrintRawRead(flashReadByteArray);
           
+        }
+
+        public string getPage()
+        {
+            serialPorts.WriteData(commandsAsStrings[(int)commands.confirm]);
+            System.Threading.Thread.Sleep(150);
+            return serialPorts.ReadExistingAsString();
         }
 
         public int[] getIntArrayFromString(string data)
@@ -241,6 +373,7 @@ namespace Lumi_Uploader_for_TinySafeBoot
 
         public void parseAndPrintRawRead(int[] rawFlashRead)
         {   
+            // 0. Greeting
             // 1. Get number of pages reads.
             // 2. Define page array, lineBuffer, lineSize, location.
             // 3. Loop through each page...
@@ -254,12 +387,14 @@ namespace Lumi_Uploader_for_TinySafeBoot
             int numberOfPagesRead = (rawFlashRead.Length / pageSize);
             int[] pageByteArray = new int[pageSize];
             const int pageDepth = 8;
-
             string lineBuffer = "";
+
+            mainDisplay.AppendText("\nFlash readout for DEVICE TYPE\n\n", System.Drawing.Color.White);
 
             for(int i = 0; i < numberOfPagesRead; i++)
             {
-                for(int j = 0; j < pageDepth; j++)
+                mainDisplay.AppendText("\n\t Page #:" + i + "\n", System.Drawing.Color.Yellow);
+                for (int j = 0; j < pageDepth; j++)
                 {
                     int location = ((i * pageSize) + (j * pageDepth));
                     mainDisplay.AppendText(location.ToString("X4") + ": ", System.Drawing.Color.Yellow);
@@ -267,10 +402,9 @@ namespace Lumi_Uploader_for_TinySafeBoot
                     {
                         lineBuffer += rawFlashRead[location + k].ToString("X2");
                     }                  
-                    mainDisplay.AppendText(lineBuffer.ToString() + "\n", System.Drawing.Color.LimeGreen);
+                    mainDisplay.AppendText(lineBuffer.ToString() + "\n", System.Drawing.Color.LawnGreen);
                     lineBuffer = "";
                 }
-                mainDisplay.AppendText("\n\tPage #: "+i + "\n\n", System.Drawing.Color.Yellow);
             }
         }
 

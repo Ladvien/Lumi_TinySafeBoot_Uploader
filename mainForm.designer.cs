@@ -132,7 +132,7 @@
             // 
             this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(74, 4);
             // 
             // mnuMainMenu
             // 
@@ -169,7 +169,6 @@
             // 
             // newToolStripMenuItem
             // 
-            this.newToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("newToolStripMenuItem.Image")));
             this.newToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
@@ -178,7 +177,6 @@
             // 
             // openToolStripMenuItem
             // 
-            this.openToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openToolStripMenuItem.Image")));
             this.openToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
@@ -192,7 +190,6 @@
             // 
             // saveToolStripMenuItem
             // 
-            this.saveToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("saveToolStripMenuItem.Image")));
             this.saveToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
@@ -212,7 +209,6 @@
             // 
             // printToolStripMenuItem
             // 
-            this.printToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("printToolStripMenuItem.Image")));
             this.printToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.printToolStripMenuItem.Name = "printToolStripMenuItem";
             this.printToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
@@ -221,7 +217,6 @@
             // 
             // printPreviewToolStripMenuItem
             // 
-            this.printPreviewToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("printPreviewToolStripMenuItem.Image")));
             this.printPreviewToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.printPreviewToolStripMenuItem.Name = "printPreviewToolStripMenuItem";
             this.printPreviewToolStripMenuItem.Size = new System.Drawing.Size(206, 30);
@@ -275,7 +270,6 @@
             // 
             // cutToolStripMenuItem
             // 
-            this.cutToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("cutToolStripMenuItem.Image")));
             this.cutToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
             this.cutToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
@@ -284,7 +278,6 @@
             // 
             // copyToolStripMenuItem
             // 
-            this.copyToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("copyToolStripMenuItem.Image")));
             this.copyToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
             this.copyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
@@ -293,7 +286,6 @@
             // 
             // pasteToolStripMenuItem
             // 
-            this.pasteToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("pasteToolStripMenuItem.Image")));
             this.pasteToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
             this.pasteToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
@@ -728,7 +720,7 @@
             this.ltbTSB.ColumnCount = 3;
             this.ltbTSB.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 31.61222F));
             this.ltbTSB.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 68.38778F));
-            this.ltbTSB.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 381F));
+            this.ltbTSB.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 383F));
             this.ltbTSB.Controls.Add(this.label9, 0, 2);
             this.ltbTSB.Controls.Add(this.label10, 0, 1);
             this.ltbTSB.Controls.Add(this.rtbHexFilePath, 1, 1);
@@ -753,7 +745,7 @@
             this.label9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label9.Location = new System.Drawing.Point(3, 80);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(173, 40);
+            this.label9.Size = new System.Drawing.Size(172, 40);
             this.label9.TabIndex = 6;
             this.label9.Text = "Chip:";
             this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -764,7 +756,7 @@
             this.label10.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label10.Location = new System.Drawing.Point(3, 40);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(173, 40);
+            this.label10.Size = new System.Drawing.Size(172, 40);
             this.label10.TabIndex = 5;
             this.label10.Text = "Hex File Path:";
             this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -774,21 +766,21 @@
             this.rtbHexFilePath.DetectUrls = false;
             this.rtbHexFilePath.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rtbHexFilePath.ForeColor = System.Drawing.SystemColors.MenuText;
-            this.rtbHexFilePath.Location = new System.Drawing.Point(182, 43);
+            this.rtbHexFilePath.Location = new System.Drawing.Point(181, 43);
             this.rtbHexFilePath.Multiline = false;
             this.rtbHexFilePath.Name = "rtbHexFilePath";
             this.rtbHexFilePath.ReadOnly = true;
             this.rtbHexFilePath.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
-            this.rtbHexFilePath.Size = new System.Drawing.Size(382, 34);
+            this.rtbHexFilePath.Size = new System.Drawing.Size(381, 34);
             this.rtbHexFilePath.TabIndex = 2;
             this.rtbHexFilePath.Text = "None";
             // 
             // btnOpenFile
             // 
             this.btnOpenFile.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnOpenFile.Location = new System.Drawing.Point(182, 3);
+            this.btnOpenFile.Location = new System.Drawing.Point(181, 3);
             this.btnOpenFile.Name = "btnOpenFile";
-            this.btnOpenFile.Size = new System.Drawing.Size(382, 34);
+            this.btnOpenFile.Size = new System.Drawing.Size(381, 34);
             this.btnOpenFile.TabIndex = 3;
             this.btnOpenFile.Text = "Open Hex File";
             this.btnOpenFile.UseVisualStyleBackColor = true;
@@ -798,9 +790,9 @@
             this.btnWriteHexFile.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnWriteHexFile.Location = new System.Drawing.Point(182, 123);
+            this.btnWriteHexFile.Location = new System.Drawing.Point(181, 123);
             this.btnWriteHexFile.Name = "btnWriteHexFile";
-            this.btnWriteHexFile.Size = new System.Drawing.Size(382, 36);
+            this.btnWriteHexFile.Size = new System.Drawing.Size(381, 36);
             this.btnWriteHexFile.TabIndex = 1;
             this.btnWriteHexFile.Text = "Write File";
             this.btnWriteHexFile.UseVisualStyleBackColor = true;
@@ -811,9 +803,9 @@
             this.btnReadHexFile.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnReadHexFile.Location = new System.Drawing.Point(570, 123);
+            this.btnReadHexFile.Location = new System.Drawing.Point(568, 123);
             this.btnReadHexFile.Name = "btnReadHexFile";
-            this.btnReadHexFile.Size = new System.Drawing.Size(376, 36);
+            this.btnReadHexFile.Size = new System.Drawing.Size(378, 36);
             this.btnReadHexFile.TabIndex = 4;
             this.btnReadHexFile.Text = "Read File";
             this.btnReadHexFile.UseVisualStyleBackColor = true;
@@ -824,9 +816,9 @@
             this.cmbChip.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbChip.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbChip.FormattingEnabled = true;
-            this.cmbChip.Location = new System.Drawing.Point(182, 83);
+            this.cmbChip.Location = new System.Drawing.Point(181, 83);
             this.cmbChip.Name = "cmbChip";
-            this.cmbChip.Size = new System.Drawing.Size(382, 28);
+            this.cmbChip.Size = new System.Drawing.Size(381, 28);
             this.cmbChip.TabIndex = 7;
             // 
             // tableLayoutPanel4
@@ -1058,7 +1050,7 @@
             this.Controls.Add(this.mnuMainMenu);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainDisplay";
-            this.Text = "HM-1X Aid v01";
+            this.Text = "Lumi";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainDisplay_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.mnuMainMenu.ResumeLayout(false);
@@ -1098,15 +1090,6 @@
         private System.Windows.Forms.ToolStripMenuItem printPreviewToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem redoToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.ToolStripMenuItem cutToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
-        private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem customizeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
@@ -1168,6 +1151,15 @@
         private System.Windows.Forms.ComboBox cmbChip;
         private System.Windows.Forms.Label lblTSB;
         private System.Windows.Forms.Button btnConnectToTSB;
+        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem redoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripMenuItem cutToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem;
     }
 
 

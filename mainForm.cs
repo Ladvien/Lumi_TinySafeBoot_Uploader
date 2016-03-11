@@ -52,6 +52,8 @@ namespace HM_1X_Aid_v01
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            btnClearSendBox.FlatStyle = FlatStyle.System;
+            
             // Prevents the GUI from getting illegible.
             this.MinimumSize = new System.Drawing.Size(800, 600);
 
