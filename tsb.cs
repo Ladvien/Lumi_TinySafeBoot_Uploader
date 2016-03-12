@@ -13,136 +13,135 @@ namespace Lumi_Uploader_for_TinySafeBoot
     class tsb
     {
         #region devices
-        enum ATMEL_DEVICE
+        enum DEVICE_SIGNATURE
         {
-            ATMEGA_328P = 0,
-            ATTINY_13A = 1,
-            ATTINY_13 = 2,
-            ATTINY_1634 = 3,
-            ATTINY_167 = 4,
-            ATTINY_2313A = 5,
-            ATTINY_2313 = 6,
-            ATTINY_24A = 7,
-            ATTINY_24 = 8,
-            ATTINY_25 = 9,
-            ATTINY_261A = 10,
-            ATTINY_261 = 11,
-            ATTINY_4313 = 12,
-            ATTINY_44A = 13,
-            ATTINY_44 = 14,
-            ATTINY_441 = 15,
-            ATTINY_45 = 16,
-            ATTINY_461A = 17,
-            ATTINY_461 = 18,
-            ATTINY_48 = 19,
-            ATTINY_84A = 20,
-            ATTINY_84 = 21,
-            ATTINY_841 = 22,
-            ATTINY_85 = 23,
-            ATTINY_861A = 24,
-            ATTINY_861 = 25,
-            ATTINY_87 = 26,
-            ATTINY_88 = 27,
-            ATMEGA_162 = 28,
-            ATMEGA_164A = 29,
-            ATMEGA_164PA = 30,
-            ATMEGA_164P = 31,
-            ATMEGA_165A = 32,
-            ATMEGA_165PA = 33,
-            ATMEGA_165P = 34,
-            ATMEGA_168A = 35,
-            ATMEGA_168 = 36,
-            ATMEGA_168PA = 37,
-            ATMEGA_168P = 38,
-            ATMEGA_169A = 39,
-            ATMEGA_169PA = 40,
-            ATMEGA_169P = 41,
-            ATMEGA_16A = 42,
-            ATMEGA_16 = 43,
-            ATMEGA_16HVA = 44,
-            ATMEGA_16HVB = 45,
-            ATMEGA_16ATMEGA_1 = 46,
-            ATMEGA_16U2 = 47,
-            ATMEGA_16U4 = 48,
-            ATMEGA_324A = 49,
-            ATMEGA_324PA = 50,
-            ATMEGA_324P = 51,
-            ATMEGA_3250A = 52,
-            ATMEGA_3250 = 53,
-            ATMEGA_3250PA = 54,
-            ATMEGA_3250P = 55,
-            ATMEGA_325A = 56,
-            ATMEGA_325 = 57,
-            ATMEGA_325PA = 58,
-            ATMEGA_325P = 59,
-            ATMEGA_328 = 60,
-            //ATMEGA_328P = 61,
-            ATMEGA_3290A = 62,
-            ATMEGA_3290 = 63,
-            ATMEGA_3290PA = 64,
-            ATMEGA_3290P = 65,
-            ATMEGA_329A = 66,
-            ATMEGA_329 = 67,
-            ATMEGA_329PA = 68,
-            ATMEGA_329P = 69,
-            ATMEGA_32A = 70,
-            ATMEGA_32C1 = 71,
-            ATMEGA_32 = 72,
-            ATMEGA_32HVB = 73,
-            ATMEGA_32ATMEGA_1 = 74,
-            ATMEGA_32U2 = 75,
-            ATMEGA_32U4 = 76,
-            ATMEGA_406 = 77,
-            ATMEGA_48A = 78,
-            ATMEGA_48 = 79,
-            ATMEGA_48PA = 80,
-            ATMEGA_48P = 81,
-            ATMEGA_640 = 82,
-            ATMEGA_644A = 83,
-            ATMEGA_644 = 84,
-            ATMEGA_644PA = 85,
-            ATMEGA_644P = 86,
-            ATMEGA_6450A = 87,
-            ATMEGA_6450 = 88,
-            ATMEGA_6450P = 89,
-            ATMEGA_645A = 90,
-            ATMEGA_645 = 91,
-            ATMEGA_645P = 92,
-            ATMEGA_6490A = 93,
-            ATMEGA_6490 = 94,
-            ATMEGA_6490P = 95,
-            ATMEGA_649A = 96,
-            ATMEGA_649 = 97,
-            ATMEGA_649P = 98,
-            ATMEGA_64C1 = 99,
-            ATMEGA_64ATMEGA_1 = 100,
-            ATMEGA_64RFR2 = 101,
-            ATMEGA_8515 = 102,
-            ATMEGA_8535 = 103,
-            ATMEGA_88A = 104,
-            ATMEGA_88 = 105,
-            ATMEGA_88PA = 106,
-            ATMEGA_88P = 107,
-            ATMEGA_8A = 108,
-            ATMEGA_8 = 109,
-            ATMEGA_8HVA = 110,
-            ATMEGA_8U2 = 111
-        };
-
-        enum ATMEL_SIGNATURE_BYTES
-        {
+            ATTINY_13A = 0x1E9007,
+            ATTINY_13 = 0x1E9007,
+            ATTINY_1634 = 0x1E9412,
+            ATTINY_167 = 0x1E9487,
+            ATTINY_2313A = 0x1E910A,
+            ATTINY_2313 = 0x1E910A,
+            ATTINY_24A = 0x1E910B,
+            ATTINY_24 = 0x1E910B,
+            ATTINY_25 = 0x1E910B,
+            ATTINY_261A = 0x1E910C,
+            ATTINY_261 = 0x1E910C,
+            ATTINY_4313 = 0x1E920D,
+            ATTINY_44A = 0x1E9207,
+            ATTINY_44 = 0x1E9207,
+            ATTINY_441 = 0x1E9215,
+            ATTINY_45 = 0x1E9206,
+            ATTINY_461A = 0x1E9208,
+            ATTINY_461 = 0x1E9208,
+            ATTINY_48 = 0x1E9209,
+            ATTINY_84A = 0x1E930C,
+            ATTINY_84 = 0x1E930C,
+            ATTINY_841 = 0x1E9315,
+            ATTINY_85 = 0x1E930B,
+            ATTINY_861A = 0x1E930D,
+            ATTINY_861 = 0x1E930D,
+            ATTINY_87 = 0x1E9387,
+            ATTINY_88 = 0x1E9311,
+            ATMEGA_162 = 0x1E9403,
+            ATMEGA_164A = 0x1E940F,
+            ATMEGA_164PA = 0x1E940A,
+            ATMEGA_164P = 0x1E940A,
+            ATMEGA_165A = 0x1E9410,
+            ATMEGA_165PA = 0x1E9407,
+            ATMEGA_165P = 0x1E9407,
+            ATMEGA_168A = 0x1E9406,
+            ATMEGA_168 = 0x1E9406,
+            ATMEGA_168PA = 0x1E940B,
+            ATMEGA_168P = 0x1E940B,
+            ATMEGA_169A = 0x1E9411,
+            ATMEGA_169PA = 0x1E9405,
+            ATMEGA_169P = 0x1E9405,
+            ATMEGA_16A = 0x1E9403,
+            ATMEGA_16 = 0x1E9403,
+            ATMEGA_16HVA = 0x1E940C,
+            ATMEGA_16HVB = 0x1E940D,
+            ATMEGA_16ATMEGA_1 = 0x1E9484,
+            ATMEGA_16U2 = 0x1E9489,
+            ATMEGA_16U4 = 0x1E9488,
+            ATMEGA_324A = 0x1E9515,
+            ATMEGA_324PA = 0x1E9511,
+            ATMEGA_324P = 0x1E9508,
+            ATMEGA_3250A = 0x1E950E,
+            ATMEGA_3250 = 0x1E9506,
+            ATMEGA_3250PA = 0x1E950E,
+            ATMEGA_3250P = 0x1E950E,
+            ATMEGA_325A = 0x1E9505,
+            ATMEGA_325 = 0x1E9505,
+            ATMEGA_325PA = 0x1E9505,
+            ATMEGA_325P = 0x1E950D,
+            ATMEGA_328 = 0x1E9514,
+            ATMEGA_328P = 0x1E950F,
+            ATMEGA_3290A = 0x1E950C,
+            ATMEGA_3290 = 0x1E9504,
+            ATMEGA_3290PA = 0x1E950C,
+            ATMEGA_3290P = 0x1E950C,
+            ATMEGA_329A = 0x1E9503,
+            ATMEGA_329 = 0x1E9503,
+            ATMEGA_329PA = 0x1E950B,
+            ATMEGA_329P = 0x1E950B,
+            ATMEGA_32A = 0x1E9502,
+            ATMEGA_32C1 = 0x1E9586,
+            ATMEGA_32 = 0x1E9502,
+            ATMEGA_32HVB = 0x1E9510,
+            ATMEGA_32ATMEGA_1 = 0x1E9584,
+            ATMEGA_32U2 = 0x1E958A,
+            ATMEGA_32U4 = 0x1E9587,
+            ATMEGA_406 = 0x1E9507,
+            ATMEGA_48A = 0x1E9205,
+            ATMEGA_48 = 0x1E9205,
+            ATMEGA_48PA = 0x1E920A,
+            ATMEGA_48P = 0x1E920A,
+            ATMEGA_640 = 0x1E9608,
+            ATMEGA_644A = 0x1E9609,
+            ATMEGA_644 = 0x1E9609,
+            ATMEGA_644PA = 0x1E960A,
+            ATMEGA_644P = 0x1E960A
         }
         #endregion devices
 
+        #region enumerations
+        // TSB Command Variables
+        public enum commands : int
+        {
+            none = 0,
+            hello = 1,
+            request = 2,
+            confirm = 3,
+            readFlash = 4,
+            writeFlash = 5,
+            readEEPROM = 6,
+            writeEEPROM = 7,
+            readUserData = 8,
+            writeUserData = 9,
+            error = 10
+        }
+
+        public static string[] commandsAsStrings =
+        {
+            "",
+            "@@@",
+            "?",
+            "!",
+            "f",
+            "F",
+            "e",
+            "E",
+            "c",
+            "C",
+        };
+        #endregion enumerations
+
+        #region properties
 
         public delegate void TsbConnected(bool tsbConnectionStatus);
         public event TsbConnected TsbConnectedEventHandler;
 
-        // Connected to TSB.
-        private bool tsbConnected = false;
-
         const int commandAttempts = 3;
-        private int commandAttemptsIndex = 0;
 
         private string rxBuffer = "";
 
@@ -161,61 +160,28 @@ namespace Lumi_Uploader_for_TinySafeBoot
         // Number of pages
         int numberOfPages = 0;
 
-        // Flash Read Buffer
-        byte[] readFlashBuffer = { 0 };
-
+        DEVICE_SIGNATURE deviceSignatureValue = new DEVICE_SIGNATURE();
         commands commandInProgress = new commands();
 
         SerialPortsExtended serialPorts;
         RichTextBox mainDisplay;
         ProgressBar progressBar;
 
+        #endregion properties
+
+
+
+
+
+
         public void init(SerialPortsExtended serialPortMain, RichTextBox mainDisplayMain, ProgressBar mainProgressBar)
         {
             serialPorts = serialPortMain;
             mainDisplay = mainDisplayMain;
             progressBar = mainProgressBar;
-            
         }
 
 
-        // TSB Actions in Progress
-        public enum tsbActionsInProgress: int
-        {
-            none = 0,
-            handshaking = 1,
-            readingFlash = 2
-        }
-
-        // TSB Command Variables
-        public enum commands: int
-        {
-           none = 0,
-           hello = 1,
-           request = 2,
-           confirm = 3,
-           readFlash = 4,
-           writeFlash = 5,  
-           readEEPROM = 6,
-           writeEEPROM = 7,
-           readUserData = 8,
-           writeUserData = 9,
-           error = 10
-        }
-
-        public static string[] commandsAsStrings =
-        {
-            "",
-            "@@@",
-            "?",
-            "!",
-            "f",
-            "F",
-            "e",
-            "E",
-            "c",
-            "C",
-        };
 
         public string commandString(commands commandNumber)
         {
@@ -278,6 +244,8 @@ namespace Lumi_Uploader_for_TinySafeBoot
 
                 // Atmel device signature.
                 deviceSignature = signatureBytes[0].ToString("X2") + " " + signatureBytes[1].ToString("X2") + " " + signatureBytes[2].ToString("X2");
+                Int32 combinedDeviceSignature = (Int32)(((signatureBytes[0] << 16) | signatureBytes[1] << 8) | signatureBytes[2]);
+                deviceSignatureValue = (DEVICE_SIGNATURE)combinedDeviceSignature;
 
                 // The size is in words, make it bytes.
                 pageSize = (pagesizeInWords * 2);
@@ -296,7 +264,8 @@ namespace Lumi_Uploader_for_TinySafeBoot
                 string eeprom = fullEepromSize.ToString();
 
                 mainDisplay.AppendText(
-                      "Firmware Date:  " + firmwareDateString
+                         deviceSignatureValue.ToString()
+                    + "\nFirmware Date:  " + firmwareDateString
                     + "\nStatus:         " + firmwareStatus.ToString("X2")
                     + "\nSignature:      " + deviceSignature
                     + "\nPage Size:      " + pageSizeString
@@ -337,13 +306,12 @@ namespace Lumi_Uploader_for_TinySafeBoot
                 pageIndex++;
                 if (localStringBuffer[localStringBuffer.Length - 1] == 0xFF &&
                     localStringBuffer[localStringBuffer.Length - 1] == 0xFF)
-                {   localStringBuffer += getPage();
+                {
+                    localStringBuffer += getPage();
                     break;
                 }
             }
 
-            string fileName = "Lumi_Up_output.hex";
-            writeByteArrayToFile(fileName, localStringBuffer);
             int[] flashReadByteArray = getIntArrayFromString(localStringBuffer);
             parseAndPrintRawRead(flashReadByteArray);
           
@@ -372,21 +340,26 @@ namespace Lumi_Uploader_for_TinySafeBoot
         }
 
         public void parseAndPrintRawRead(int[] rawFlashRead)
-        {   
+        {
             // 0. Greeting
             // 1. Get number of pages reads.
             // 2. Define page array, lineBuffer, lineSize, location.
+            //    and get doc path and stream.
             // 3. Loop through each page...
             // 4. Loop through page depth (pageDepth * lineSize = page)
             // 5. Loop through line
             // 6. Write assemble a HEX string a byte at a time.
-            // 7. Write the assembled HEX string to display
+            // 7. Write the assembled HEX string to display and file.
             // 8. Clear line buffer.
             // 9. Repeat 1-8 until end of int array.
 
+            string mydocpath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            System.IO.StreamWriter outputFile = new System.IO.StreamWriter(mydocpath + @"\Flash_Read_Output.hex");
+            
             int numberOfPagesRead = (rawFlashRead.Length / pageSize);
             int[] pageByteArray = new int[pageSize];
             const int pageDepth = 8;
+            const int pageWidth = 16;
             string lineBuffer = "";
 
             mainDisplay.AppendText("\nFlash readout for DEVICE TYPE\n\n", System.Drawing.Color.White);
@@ -396,34 +369,74 @@ namespace Lumi_Uploader_for_TinySafeBoot
                 mainDisplay.AppendText("\n\t Page #:" + i + "\n", System.Drawing.Color.Yellow);
                 for (int j = 0; j < pageDepth; j++)
                 {
-                    int location = ((i * pageSize) + (j * pageDepth));
+                    int location = ((i * pageSize) + (j * pageWidth));
                     mainDisplay.AppendText(location.ToString("X4") + ": ", System.Drawing.Color.Yellow);
-                    for(int k = 0; k < 16; k++)
+                    for(int k = 0; k < pageWidth; k++)
                     {
                         lineBuffer += rawFlashRead[location + k].ToString("X2");
-                    }                  
+                        Console.WriteLine(lineBuffer);
+                    }
+                    outputFile.WriteLine(getIntelFileHexString(location.ToString("X4"), lineBuffer.ToString()), true);
                     mainDisplay.AppendText(lineBuffer.ToString() + "\n", System.Drawing.Color.LawnGreen);
                     lineBuffer = "";
                 }
             }
+            outputFile.Close();
         }
 
-        public static void writeByteArrayToFile(string path, string data)
+        public string getIntelFileHexString(string address, string data)
         {
-            // 1. Loop through each character in string.
-            // 2. Convert to int.
-            // 3. Convert back to a string in HEX form.
-            // 4. Append the string to master string.
-            // 5. Write master string to file as monoline.
+            // 1. Get start code.
+            // 2. Get and set byte count string.
+            // 3. Set address string.
+            // 4. Get record type.
+            // 5. Set data
+            // 6. Get and set checksum.
+            // 7. Add newline at end.
+            // 8. Return completed Intel HEX file line as string.
 
-            string dataAsString = "";
-            int x = 0;
-            for(int i = 0; i < data.Length; i++)
+            string startCode = ":";
+            string byteCount = (data.Length / 2).ToString("X2");
+            // Address passed in.
+            string recordType = "00"; // 00 = Data, 01 = EOF, 02 = Ext. Segment. Addr., 03 = Start Lin. Addr, 04 = Ext. Linear Addr., 05 = Start Linear Addr.
+            // Checksum passed in
+
+            string intelHexFileLine = startCode + byteCount + address + recordType + data;
+
+            int checkSum = getCheckSumFromLine(intelHexFileLine);
+
+            intelHexFileLine += checkSum.ToString("X2");
+
+            return intelHexFileLine;
+        }
+
+        public int getCheckSumFromLine(string line)
+        {
+            // 1. Remove start character.
+            // 2. Split the line into array of char pairs (e.g., "FFAC" -> { "FF", "AC" })
+            // 3. Convert HEX string pairs to Int32, then cast as byte.
+            // 4. Sum all bytes for the line.
+            // 5. Take the two's complement.
+            // 6. Return checksum.
+
+            byte checkSum = 0;
+            int halfLength = (line.Length / 2);
+            int[] returnBuffer = new int[halfLength];
+            string[] splitByTwoData = new string[halfLength];
+
+            line = line.Replace(":", "");
+            for(int i = 0; i < halfLength; i++ )
             {
-                x = data[i];
-                dataAsString += (x).ToString("X2");
+                splitByTwoData[i] = line.Substring((i * 2),2);
             }
-            System.IO.File.WriteAllText(path, dataAsString);
+            for(int i = 0; i < halfLength; i++)
+            {
+                checkSum += (byte)Convert.ToInt32(splitByTwoData[i], 16);
+            }
+            checkSum = (byte)(~checkSum + 1);
+
+
+            return checkSum;
         }
 
         public void setTsbConnectionSafely(bool tsbConnection)
@@ -436,5 +449,11 @@ namespace Lumi_Uploader_for_TinySafeBoot
             TsbConnectedEventHandler.Invoke(tsbConnection);
         }
 
+        private DEVICE_SIGNATURE getDeviceInfo(UInt32 rawDeviceSignature)
+        {
+            DEVICE_SIGNATURE identifiedDevice = new DEVICE_SIGNATURE();
+
+            return identifiedDevice;
+        }
     } // End of Class
 } // End of Namespace
