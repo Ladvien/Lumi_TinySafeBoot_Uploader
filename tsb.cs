@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Reflection;
+using System.Drawing;
+using System.IO;
 
 
 
@@ -134,6 +136,14 @@ namespace Lumi_Uploader_for_TinySafeBoot
             "c",
             "C",
         };
+
+        public enum displayFlash
+        {
+            asIntelHexFile = 0,
+            dataOnly = 1,
+            addressAndData = 2,
+            none = 3
+        }
         #endregion enumerations
 
         #region properties
@@ -162,6 +172,7 @@ namespace Lumi_Uploader_for_TinySafeBoot
 
         DEVICE_SIGNATURE deviceSignatureValue = new DEVICE_SIGNATURE();
         commands commandInProgress = new commands();
+        displayFlash displayFlashType = displayFlash.asIntelHexFile;
 
         SerialPortsExtended serialPorts;
         RichTextBox mainDisplay;
@@ -170,18 +181,12 @@ namespace Lumi_Uploader_for_TinySafeBoot
         #endregion properties
 
 
-
-
-
-
         public void init(SerialPortsExtended serialPortMain, RichTextBox mainDisplayMain, ProgressBar mainProgressBar)
         {
             serialPorts = serialPortMain;
             mainDisplay = mainDisplayMain;
             progressBar = mainProgressBar;
         }
-
-
 
         public string commandString(commands commandNumber)
         {
@@ -239,7 +244,7 @@ namespace Lumi_Uploader_for_TinySafeBoot
                 int day = firmwareDatePieces[0];
                 int month = ((firmwareDatePieces[1] & 0xF0) >> 1);
                 int year = (firmwareDatePieces[1] & 0x0F);
-                Console.WriteLine(firmwareDate);
+
                 firmwareDateString = (month + " " + day + " " + "20" + year);
 
                 // Atmel device signature.
@@ -251,13 +256,13 @@ namespace Lumi_Uploader_for_TinySafeBoot
                 pageSize = (pagesizeInWords * 2);
                 string pageSizeString = (pagesizeInWords * 2).ToString();
 
-                // REPLACE WITH DEVICE INFO
-                //numberOfPages = 32768 / pageSize;
-                numberOfPages = 16;
-
                 // Get flash size.
                 flashSize = ((freeFlash[1] << 8) | freeFlash[0])*2;
                 string flashLeft = flashSize.ToString();
+
+                // REPLACE WITH DEVICE INFO
+                numberOfPages = flashSize / pageSize;
+                //numberOfPages = 16;
 
                 // Get EEPROM size.
                 fullEepromSize = ((eepromSize[1] << 8) | eepromSize[0])+1;
@@ -307,7 +312,7 @@ namespace Lumi_Uploader_for_TinySafeBoot
                 if (localStringBuffer[localStringBuffer.Length - 1] == 0xFF &&
                     localStringBuffer[localStringBuffer.Length - 1] == 0xFF)
                 {
-                    localStringBuffer += getPage();
+                    //localStringBuffer += getPage();
                     break;
                 }
             }
@@ -358,7 +363,7 @@ namespace Lumi_Uploader_for_TinySafeBoot
             
             int numberOfPagesRead = (rawFlashRead.Length / pageSize);
             int[] pageByteArray = new int[pageSize];
-            const int pageDepth = 8;
+            int pageDepth = (pageSize/16);
             const int pageWidth = 16;
             string lineBuffer = "";
 
@@ -366,18 +371,17 @@ namespace Lumi_Uploader_for_TinySafeBoot
 
             for(int i = 0; i < numberOfPagesRead; i++)
             {
-                mainDisplay.AppendText("\n\t Page #:" + i + "\n", System.Drawing.Color.Yellow);
+                if (displayFlashType != displayFlash.none)
+                { mainDisplay.AppendText("\n\t Page #:" + i + "\n", System.Drawing.Color.Yellow); }
+
                 for (int j = 0; j < pageDepth; j++)
                 {
                     int location = ((i * pageSize) + (j * pageWidth));
-                    mainDisplay.AppendText(location.ToString("X4") + ": ", System.Drawing.Color.Yellow);
                     for(int k = 0; k < pageWidth; k++)
                     {
                         lineBuffer += rawFlashRead[location + k].ToString("X2");
-                        Console.WriteLine(lineBuffer);
                     }
                     outputFile.WriteLine(getIntelFileHexString(location.ToString("X4"), lineBuffer.ToString()), true);
-                    mainDisplay.AppendText(lineBuffer.ToString() + "\n", System.Drawing.Color.LawnGreen);
                     lineBuffer = "";
                 }
             }
@@ -402,10 +406,28 @@ namespace Lumi_Uploader_for_TinySafeBoot
             // Checksum passed in
 
             string intelHexFileLine = startCode + byteCount + address + recordType + data;
-
             int checkSum = getCheckSumFromLine(intelHexFileLine);
+            string checkSumString = checkSum.ToString("X2");
+            intelHexFileLine += checkSumString;
 
-            intelHexFileLine += checkSum.ToString("X2");
+            switch (displayFlashType)
+            {
+                case displayFlash.asIntelHexFile:
+                    mainDisplay.AppendText(":", Color.Yellow);                  // Start code
+                    mainDisplay.AppendText(byteCount, Color.Green);             // Byte count
+                    mainDisplay.AppendText(address, Color.Purple);              // Address
+                    mainDisplay.AppendText(recordType, Color.Pink);             // Record type.
+                    mainDisplay.AppendText(data, Color.CadetBlue);              // Data
+                    mainDisplay.AppendText(checkSumString + "\n", Color.Gray);  // Checksum
+                    break;
+                case displayFlash.none:
+                    // No display.
+                    break;
+                case displayFlash.addressAndData:
+                    mainDisplay.AppendText(address + ": ", Color.Yellow);
+                    mainDisplay.AppendText(data + "\n", Color.LawnGreen);
+                    break;
+            }
 
             return intelHexFileLine;
         }
@@ -439,6 +461,14 @@ namespace Lumi_Uploader_for_TinySafeBoot
             return checkSum;
         }
 
+        public void readFile()
+        {
+            intelHexFile intelHexFileHandler = new intelHexFile();
+
+            string filePath = @"C:\Users\User\Documents\tsb_atmega_test.hex";
+            intelHexFileHandler.intelHexFileToArray(filePath);
+        }
+
         public void setTsbConnectionSafely(bool tsbConnection)
         {
             if (mainDisplay.InvokeRequired)
@@ -455,5 +485,50 @@ namespace Lumi_Uploader_for_TinySafeBoot
 
             return identifiedDevice;
         }
+
     } // End of Class
+
+    class intelHexFile
+    {
+        public byte[] intelHexFileToArray(string fileName)
+        {
+            // 1. Open file.
+            // 2. Get number of lines in file.
+            // 3. Get the non-data char count.
+            // 4. Get a byte array sized for at least all the data (16 bytes * number of lines).
+            // 5. 
+            StreamReader fileStream = new StreamReader(fileName);
+            int numberOfLinesInFile = linesInFile(fileStream);
+            byte[] bytesFromFile = new byte[numberOfLinesInFile*16];
+
+            return bytesFromFile;
+        }
+
+        private int linesInFile(StreamReader file)
+        {
+            string line = "";
+            int lineCount = 0;
+            while ((line = file.ReadLine()) != null)
+            {lineCount++;}
+            return lineCount;
+        }
+
+        public byte Ascii2Hex(byte c)
+        {
+            if (c >= '0' && c <= '9')
+            {
+                return (byte)(c - '0');
+            }
+            if (c >= 'A' && c <= 'F')
+            {
+                return (byte)(c - 'A' + 10);
+            }
+            if (c >= 'a' && c <= 'f')
+            {
+                return (byte)(c - 'a' + 10);
+            }
+
+            return 0;  // this "return" will never be reached, but some compilers give a warning if it is not present
+        }
+    }
 } // End of Namespace

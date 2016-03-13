@@ -514,7 +514,7 @@ namespace HM_1X_Aid_v01
 
         private void btnWriteHexFile_Click(object sender, EventArgs e)
         {
-
+            tsb.readFile();
         }
 
 
