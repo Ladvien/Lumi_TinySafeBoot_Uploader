@@ -8,8 +8,6 @@ using System.Reflection;
 using System.Drawing;
 using System.IO;
 
-
-
 namespace Lumi_Uploader_for_TinySafeBoot
 {
     class tsb
@@ -461,12 +459,26 @@ namespace Lumi_Uploader_for_TinySafeBoot
             return checkSum;
         }
 
-        public void readFile()
+        public void uploadFileToChip()
         {
-            intelHexFile intelHexFileHandler = new intelHexFile();
+            // 1. Open Intel HEX file.
+            // 2. Read file into byte array.
+            // 3. Print out the data.
 
+            intelHexFile intelHexFileHandler = new intelHexFile();
             string filePath = @"C:\Users\User\Documents\tsb_atmega_test.hex";
-            intelHexFileHandler.intelHexFileToArray(filePath);
+            byte[] bytesFromFile = intelHexFileHandler.intelHexFileToArray(filePath);
+            for(int i = 0; i < bytesFromFile.Length;)
+            {
+                mainDisplay.AppendText(i.ToString("X4")+": ", Color.Yellow);
+                for(int j = 0; j < 16; j++)
+                {
+                    if(i >= bytesFromFile.Length) { break; }
+                    mainDisplay.AppendText(bytesFromFile[i].ToString("X2"), Color.Yellow);
+                    i++;
+                }
+                mainDisplay.AppendText("\n");
+            }
         }
 
         public void setTsbConnectionSafely(bool tsbConnection)
@@ -494,14 +506,129 @@ namespace Lumi_Uploader_for_TinySafeBoot
         {
             // 1. Open file.
             // 2. Get number of lines in file.
-            // 3. Get the non-data char count.
-            // 4. Get a byte array sized for at least all the data (16 bytes * number of lines).
-            // 5. 
-            StreamReader fileStream = new StreamReader(fileName);
-            int numberOfLinesInFile = linesInFile(fileStream);
-            byte[] bytesFromFile = new byte[numberOfLinesInFile*16];
+            // 3. Close and reopen the file for reading.
+            // 4. Get the data char count.
+            // 5. Get a byte array sized for at least all the data (16 bytes * number of lines).
+            // 6. Get parsed line.
+            // 7. Continue until EOF.
+            // 8. Return the byte array filled with extracted data.
 
-            return bytesFromFile;
+            
+            if (File.Exists(fileName))
+            {
+                StreamReader fileToGetNumberOfLines = new StreamReader(fileName);
+                int numberOfLinesInFile = linesInFile(fileToGetNumberOfLines);
+                fileToGetNumberOfLines.Close();
+
+                StreamReader fileStream = new StreamReader(fileName);
+                UInt32 combinedAddressForThisLine = 0;
+                byte[] bytesThisLine = new byte[16];
+                byte[] dataFromFile = new byte[numberOfLinesInFile * 16];
+
+                Tuple<byte[], Int16> lineOfDataAndAddress = new Tuple<byte[], Int16>(null, 0);
+                for(int i = 0; i < numberOfLinesInFile; i++)
+                {
+                    lineOfDataAndAddress = readLineFromHexFile(fileStream);
+                    if(lineOfDataAndAddress.Item1 != null)
+                    {
+                        Int16 startAddressOfLine = lineOfDataAndAddress.Item2;
+                        for (int j = 0; j < lineOfDataAndAddress.Item1.Length; j++)
+                        {
+                            dataFromFile[j + startAddressOfLine] = lineOfDataAndAddress.Item1[j];
+                        }
+                    }
+                }
+                return dataFromFile;
+            } else
+            {
+                Console.WriteLine("Error");
+                return null;
+            }
+
+            return null;
+        }
+
+        public Tuple<byte[], Int16> readLineFromHexFile(StreamReader fileStream)
+        {
+            // 1. Get a line from file.
+            // 2. Remove the start character
+            // 3. Get byte count and convert to byte, then to int.
+            // 4. Get both address bytes, convert to Int16.
+            // 5. Get data type, return null if not data.
+            // 6. Loop through the data extracting a line of bytes.
+            //    UNIMP: Checksum
+            // 7. Return line of bytes and Int16 address a tuple.
+
+            int parseLineIndex = 0;
+
+            //To hold file hex values.
+            int dataByteCount = 0;
+            byte data_address1 = 0x00;
+            byte data_address2 = 0x00;
+            UInt16 fullDataAddress = 0x00;
+            Int16 fullAddressAsInt = 0;
+            byte data_record_type = 0x00;
+            byte data_check_sum = 0x00;
+
+            string line = "";
+            line = fileStream.ReadLine();
+
+            // Skip start code.
+            parseLineIndex++;
+
+            // Get byte count and convert to int.
+            string byteCountStrBfr = line.Substring(parseLineIndex, 2);
+            dataByteCount = getByteFrom2HexChar(byteCountStrBfr);
+            parseLineIndex += 2;
+
+            // Create the byte array for the read about to be read.
+            byte[] bytesFromLine = new byte[dataByteCount];
+
+            // Get data address and convert to memory address.
+            string byteDataAddressStrBfr = line.Substring(parseLineIndex, 2);
+            data_address1 = getByteFrom2HexChar(byteDataAddressStrBfr);
+            parseLineIndex += 2;
+
+            byteDataAddressStrBfr = line.Substring(parseLineIndex, 2);
+            data_address2 = getByteFrom2HexChar(byteDataAddressStrBfr);
+            parseLineIndex += 2;
+
+            fullDataAddress = (UInt16)((data_address1 << 8) | data_address2);
+            fullAddressAsInt = (Int16)fullDataAddress;
+
+            // Data type.
+            string dataRecordTypeStrBfr = line.Substring(parseLineIndex, 2);
+            data_record_type = getByteFrom2HexChar(dataRecordTypeStrBfr);
+            parseLineIndex += 2;
+
+            // If not data, don't bother and return false.
+            if (data_record_type != 0x00) { return new Tuple<byte[], Int16>(null , 0); }
+
+            // Get the data.
+            int dataIndex = 0;
+            string dataStrBfr = "";
+            while (dataIndex < dataByteCount) {
+                dataStrBfr = line.Substring(parseLineIndex, 2);
+                parseLineIndex += 2;
+                bytesFromLine[dataIndex] = getByteFrom2HexChar(dataStrBfr);
+                dataIndex++;
+            }
+
+            // Get checksum
+            // IF CHECKSUM NEEDED, GET LATER.
+
+            /*Console.WriteLine(
+               "\nByte Count: " + dataByteCount.ToString("X2") +
+               "  Full address: "+ fullAddressAsInt.ToString("X4") +
+               "  Record type: " + data_record_type.ToString("X2") +
+               "  Data: "
+               );
+               for (int i = 0; i < bytesFromLine.Length; i++)
+               {
+                   Console.Write(bytesFromLine[i].ToString("X2"));
+               }*/
+
+            return new Tuple<byte[],Int16>(bytesFromLine, fullAddressAsInt);
         }
 
         private int linesInFile(StreamReader file)
@@ -513,22 +640,10 @@ namespace Lumi_Uploader_for_TinySafeBoot
             return lineCount;
         }
 
-        public byte Ascii2Hex(byte c)
+        public byte getByteFrom2HexChar(string twoHexChars)
         {
-            if (c >= '0' && c <= '9')
-            {
-                return (byte)(c - '0');
-            }
-            if (c >= 'A' && c <= 'F')
-            {
-                return (byte)(c - 'A' + 10);
-            }
-            if (c >= 'a' && c <= 'f')
-            {
-                return (byte)(c - 'a' + 10);
-            }
-
-            return 0;  // this "return" will never be reached, but some compilers give a warning if it is not present
+            return (byte)Convert.ToInt32(twoHexChars, 16);
         }
+
     }
 } // End of Namespace
