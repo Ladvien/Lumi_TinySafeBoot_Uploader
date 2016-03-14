@@ -521,12 +521,12 @@ namespace Lumi_Uploader_for_TinySafeBoot
                 fileToGetNumberOfLines.Close();
 
                 StreamReader fileStream = new StreamReader(fileName);
-                UInt32 combinedAddressForThisLine = 0;
                 byte[] bytesThisLine = new byte[16];
                 byte[] dataFromFile = new byte[numberOfLinesInFile * 16];
 
                 Tuple<byte[], Int16> lineOfDataAndAddress = new Tuple<byte[], Int16>(null, 0);
-                for(int i = 0; i < numberOfLinesInFile; i++)
+
+                for (int i = 0; i < numberOfLinesInFile; i++)
                 {
                     lineOfDataAndAddress = readLineFromHexFile(fileStream);
                     if(lineOfDataAndAddress.Item1 != null)
@@ -644,6 +644,5 @@ namespace Lumi_Uploader_for_TinySafeBoot
         {
             return (byte)Convert.ToInt32(twoHexChars, 16);
         }
-
     }
 } // End of Namespace

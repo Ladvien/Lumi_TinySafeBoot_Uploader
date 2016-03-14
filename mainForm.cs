@@ -12,7 +12,7 @@ using Lumi_Uploader_for_TinySafeBoot;
 using System.Configuration;
 
 // Set version here.
-[assembly: AssemblyVersion("1.1.*")]
+[assembly: AssemblyVersion("0.8.*")]
 
 namespace HM_1X_Aid_v01
 {
@@ -58,7 +58,7 @@ namespace HM_1X_Aid_v01
             this.MinimumSize = new System.Drawing.Size(800, 600);
 
             // Form Title
-            this.Text = "Lumi Serial Terminal Template " + version;
+            this.Text = "Lumi " + version;
 
             // Populate COM info.
             loadCOMInfo();
