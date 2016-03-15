@@ -463,46 +463,19 @@ namespace Lumi_Uploader_for_TinySafeBoot
         {
             // 1. Open Intel HEX file.
             // 2. Read file into byte array.
-            // 3. Pad the byte array to whole pages.
-            // X. Print out the data.
+            // 3. Print out the data.
 
             intelHexFile intelHexFileHandler = new intelHexFile();
             string filePath = @"C:\Users\User\Documents\tsb_atmega_test.hex";
             byte[] bytesFromFile = intelHexFileHandler.intelHexFileToArray(filePath, pageSize);
 
-            int bytesOfPaddingToAdd = intelHexFileHandler.getNeededPadding(bytesFromFile.Length, pageSize);
-            byte[] paddingBytes = new byte[bytesOfPaddingToAdd];
-
-            for(int i = 0; i < bytesOfPaddingToAdd;i++)
+            int[] intsFromFile = new int[bytesFromFile.Length];
+            for(int i = 0; i < bytesFromFile.Length; i++)
             {
-                paddingBytes[i] = 0xFF;
+                intsFromFile[i] = bytesFromFile[i];
             }
+            parseAndPrintRawRead(intsFromFile);
 
-            int totalBytesToWriteToFlash = bytesFromFile.Length + paddingBytes.Length;
-            
-            for (int i = 0; i < bytesFromFile.Length;)
-            {
-                mainDisplay.AppendText(i.ToString("X4")+": ", Color.Yellow);
-                for(int j = 0; j < 16; j++)
-                {
-                    if(i >= bytesFromFile.Length) { break; }
-                    mainDisplay.AppendText(bytesFromFile[i].ToString("X2"), Color.Yellow);
-                    i++;
-                }
-                mainDisplay.AppendText("\n");
-            }
-
-            for (int i = 0; i < paddingBytes.Length;)
-            {
-                mainDisplay.AppendText((i +bytesFromFile.Length).ToString("X4") + ": ", Color.Yellow);
-                for (int j = 0; j < 16; j++)
-                {
-                    if (i >= paddingBytes.Length) { break; }
-                    mainDisplay.AppendText(paddingBytes[i].ToString("X2"), Color.Yellow);
-                    i++;
-                }
-                mainDisplay.AppendText("\n");
-            }
         }
 
         public void setTsbConnectionSafely(bool tsbConnection)
@@ -522,64 +495,70 @@ namespace Lumi_Uploader_for_TinySafeBoot
             return identifiedDevice;
         }
 
-    } // End of Class
+    } // End TSB Class
 
     class intelHexFile
     {
         public byte[] intelHexFileToArray(string fileName, int pageSize)
         {
-            // 1. Open file.
+            // 1. Open file for file info.
             // 2. Get number of lines in file.
             // 3. Get number of bytes in file.
             // 3. Close and reopen the file for reading.
-            // 5. Get a byte array sized for at least all the data (16 bytes * number of lines).
-
-            // ADD PAD HERE.
-
-            // 6. Get parsed line.
-            // 7. Continue until EOF.
-            // 8. Return the byte array filled with extracted data.
+            // 4. Get the number of bytes needed so all pages to write are full.
+            // 5. Get a byte array sized for number of needed pages (pageSize * neededPages).
+            // 6. Open file for reading.
+            // 7. Loop through lines in file, filling line buffer.
+            // 8. If a line of data was found...
+            // 9. Get the beginning address of the line.
+            // 10. Loop through char in line buffer.
+            // 11. If number of full lines is less than total bytes, then fill grab data from line.
+            // 12. Otherwise, pad line in the byte array with 0xFF until end of line and get position.
+            // 13. Find the difference between position and end of full page.
+            // 14. If page is not filled, fill with 0xFF.
+            // 15. Return the byte array filled with extracted data.
 
             if (File.Exists(fileName))
             {
+                // Peek.
                 StreamReader fileToGetNumberOfLines = new StreamReader(fileName);
                 Tuple<int, int> numberOfBytesAndLines = linesInFile(fileToGetNumberOfLines);
                 int numberOfBytesInFile = numberOfBytesAndLines.Item1;
                 int numberOfLinesInFile = numberOfBytesAndLines.Item2;
                 fileToGetNumberOfLines.Close();
 
+                // Buffer.
                 int neededPages = getNeededPagePadding(numberOfBytesInFile, pageSize);
-
-                Console.WriteLine(neededPages);
-
-                StreamReader fileStream = new StreamReader(fileName);
-                byte[] bytesThisLine = new byte[16];
                 byte[] dataFromFile = new byte[neededPages * pageSize];
 
+                // Read.
+                StreamReader fileStream = new StreamReader(fileName);
+                byte[] bytesThisLine = new byte[16];
                 Tuple<byte[], Int16> lineOfDataAndAddress = new Tuple<byte[], Int16>(null, 0);
-
-                //int numberOfLinesWithPagePadding = (neededPages * pageSize / 16);
                 int indexOfLastDataLine = 0;
 
-                for (int i = 0; i < numberOfLinesInFile; i++)
+
+
+                // Iterate
+                for (int lineIndex = 0; lineIndex < numberOfLinesInFile; lineIndex++)
                 {
                     lineOfDataAndAddress = readLineFromHexFile(fileStream);
                     if (lineOfDataAndAddress.Item1 != null)
                     {
                         Int16 startAddressOfLine = lineOfDataAndAddress.Item2;
-                        for (int j = 0; j < 16; j++)
+                        for (int byteIndex = 0; byteIndex < 16; byteIndex++)
                         {
-                            if (numberOfBytesInFile > (j + i * 16))
-                            { dataFromFile[j + startAddressOfLine] = lineOfDataAndAddress.Item1[j]; }
-                            else { dataFromFile[j + startAddressOfLine] = 0xFF;
-                                indexOfLastDataLine = (j + startAddressOfLine);
+                            if ((byteIndex + lineIndex * 16) < numberOfBytesInFile)
+                            { dataFromFile[byteIndex + startAddressOfLine] = lineOfDataAndAddress.Item1[byteIndex]; }
+                            else { dataFromFile[byteIndex + startAddressOfLine] = 0xFF;
+                                indexOfLastDataLine = (byteIndex + startAddressOfLine);
                             }
                         }
                     }
                 }
 
+                // Pad page.
                 int blankBytesToFill = (neededPages * pageSize) - indexOfLastDataLine;
-
                 for (int i = 0; i < blankBytesToFill; i++)
                 {
                     dataFromFile[i + indexOfLastDataLine] = 0xFF;
@@ -679,8 +658,17 @@ namespace Lumi_Uploader_for_TinySafeBoot
 
         private Tuple<int, int> linesInFile(StreamReader file)
         {
+            // 1. Read initial line.
+            // 2. If line is null return empty tuple.
+            // 3. loop through lines
+            // 4. If the line is data
+            // 5. Get how many bytes of data and add it to a running count.
+            // 6. Increment line counter
+            // 7. Read next line.
+            // 8. Continue until EOF.
+            // 9. Return bytes of data and number of lines in file.
+
             string line = "";
-            
             int lineCount = 0;
             int dataBytes = 0;
             
@@ -699,30 +687,6 @@ namespace Lumi_Uploader_for_TinySafeBoot
         public byte getByteFrom2HexChar(string twoHexChars)
         {
             return (byte)Convert.ToInt32(twoHexChars, 16);
-        }
-
-        public int getNeededPadding(int byteCount, int pageSize)
-        {
-            // 1. Find out if pageSize divides byteCount with no remainder.  If so, return 0.
-            // 2. Else, get the number of pages with padding.
-            // 3. Get total bytes with padding.
-            // 4. Find number of padding bytes needed.
-            // 5. Return how many padding bytes are required to make the last page full.
-
-            int numberOfPaddingBytesNeeded = 0;
-
-            if(byteCount % pageSize == 0)
-            {
-                return 0;
-            } else
-            {
-                Decimal approximateNumberOfPages = (byteCount / pageSize);
-                int numberOfPagesWithPadding = (int)Math.Ceiling(approximateNumberOfPages);
-                int totalBytesWithPadding = (int)Math.Floor(approximateNumberOfPages) * pageSize;
-                numberOfPaddingBytesNeeded = byteCount - totalBytesWithPadding;
-            }
-            Console.WriteLine(numberOfPaddingBytesNeeded);
-            return numberOfPaddingBytesNeeded;
         }
 
         public int getNeededPagePadding(int byteCount, int pageSize)
