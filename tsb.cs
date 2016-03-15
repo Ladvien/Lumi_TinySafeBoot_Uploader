@@ -463,18 +463,42 @@ namespace Lumi_Uploader_for_TinySafeBoot
         {
             // 1. Open Intel HEX file.
             // 2. Read file into byte array.
-            // 3. Print out the data.
+            // 3. Pad the byte array to whole pages.
+            // X. Print out the data.
 
             intelHexFile intelHexFileHandler = new intelHexFile();
             string filePath = @"C:\Users\User\Documents\tsb_atmega_test.hex";
-            byte[] bytesFromFile = intelHexFileHandler.intelHexFileToArray(filePath);
-            for(int i = 0; i < bytesFromFile.Length;)
+            byte[] bytesFromFile = intelHexFileHandler.intelHexFileToArray(filePath, pageSize);
+
+            int bytesOfPaddingToAdd = intelHexFileHandler.getNeededPadding(bytesFromFile.Length, pageSize);
+            byte[] paddingBytes = new byte[bytesOfPaddingToAdd];
+
+            for(int i = 0; i < bytesOfPaddingToAdd;i++)
+            {
+                paddingBytes[i] = 0xFF;
+            }
+
+            int totalBytesToWriteToFlash = bytesFromFile.Length + paddingBytes.Length;
+            
+            for (int i = 0; i < bytesFromFile.Length;)
             {
                 mainDisplay.AppendText(i.ToString("X4")+": ", Color.Yellow);
                 for(int j = 0; j < 16; j++)
                 {
                     if(i >= bytesFromFile.Length) { break; }
                     mainDisplay.AppendText(bytesFromFile[i].ToString("X2"), Color.Yellow);
+                    i++;
+                }
+                mainDisplay.AppendText("\n");
+            }
+
+            for (int i = 0; i < paddingBytes.Length;)
+            {
+                mainDisplay.AppendText((i +bytesFromFile.Length).ToString("X4") + ": ", Color.Yellow);
+                for (int j = 0; j < 16; j++)
+                {
+                    if (i >= paddingBytes.Length) { break; }
+                    mainDisplay.AppendText(paddingBytes[i].ToString("X2"), Color.Yellow);
                     i++;
                 }
                 mainDisplay.AppendText("\n");
@@ -502,41 +526,63 @@ namespace Lumi_Uploader_for_TinySafeBoot
 
     class intelHexFile
     {
-        public byte[] intelHexFileToArray(string fileName)
+        public byte[] intelHexFileToArray(string fileName, int pageSize)
         {
             // 1. Open file.
             // 2. Get number of lines in file.
+            // 3. Get number of bytes in file.
             // 3. Close and reopen the file for reading.
-            // 4. Get the data char count.
             // 5. Get a byte array sized for at least all the data (16 bytes * number of lines).
+
+            // ADD PAD HERE.
+
             // 6. Get parsed line.
             // 7. Continue until EOF.
             // 8. Return the byte array filled with extracted data.
 
-            
             if (File.Exists(fileName))
             {
                 StreamReader fileToGetNumberOfLines = new StreamReader(fileName);
-                int numberOfLinesInFile = linesInFile(fileToGetNumberOfLines);
+                Tuple<int, int> numberOfBytesAndLines = linesInFile(fileToGetNumberOfLines);
+                int numberOfBytesInFile = numberOfBytesAndLines.Item1;
+                int numberOfLinesInFile = numberOfBytesAndLines.Item2;
                 fileToGetNumberOfLines.Close();
+
+                int neededPages = getNeededPagePadding(numberOfBytesInFile, pageSize);
+
+                Console.WriteLine(neededPages);
 
                 StreamReader fileStream = new StreamReader(fileName);
                 byte[] bytesThisLine = new byte[16];
-                byte[] dataFromFile = new byte[numberOfLinesInFile * 16];
+                byte[] dataFromFile = new byte[neededPages * pageSize];
 
                 Tuple<byte[], Int16> lineOfDataAndAddress = new Tuple<byte[], Int16>(null, 0);
+
+                //int numberOfLinesWithPagePadding = (neededPages * pageSize / 16);
+                int indexOfLastDataLine = 0;
 
                 for (int i = 0; i < numberOfLinesInFile; i++)
                 {
                     lineOfDataAndAddress = readLineFromHexFile(fileStream);
-                    if(lineOfDataAndAddress.Item1 != null)
+                    if (lineOfDataAndAddress.Item1 != null)
                     {
                         Int16 startAddressOfLine = lineOfDataAndAddress.Item2;
-                        for (int j = 0; j < lineOfDataAndAddress.Item1.Length; j++)
+                        for (int j = 0; j < 16; j++)
                         {
-                            dataFromFile[j + startAddressOfLine] = lineOfDataAndAddress.Item1[j];
+                            if (numberOfBytesInFile > (j + i * 16))
+                            { dataFromFile[j + startAddressOfLine] = lineOfDataAndAddress.Item1[j]; }
+                            else { dataFromFile[j + startAddressOfLine] = 0xFF;
+                                indexOfLastDataLine = (j + startAddressOfLine);
+                            }
                         }
                     }
+                }
+
+                int blankBytesToFill = (neededPages * pageSize) - indexOfLastDataLine;
+
+                for (int i = 0; i < blankBytesToFill; i++)
+                {
+                    dataFromFile[i + indexOfLastDataLine] = 0xFF;
                 }
                 return dataFromFile;
             } else
@@ -631,18 +677,74 @@ namespace Lumi_Uploader_for_TinySafeBoot
             return new Tuple<byte[],Int16>(bytesFromLine, fullAddressAsInt);
         }
 
-        private int linesInFile(StreamReader file)
+        private Tuple<int, int> linesInFile(StreamReader file)
         {
             string line = "";
+            
             int lineCount = 0;
-            while ((line = file.ReadLine()) != null)
-            {lineCount++;}
-            return lineCount;
+            int dataBytes = 0;
+            
+            line = file.ReadLine();
+            while(line != null)
+            {   if(line.Substring(7, 2) == "00")
+                {
+                    dataBytes += getByteFrom2HexChar(line.Substring(1, 2));
+                    lineCount++;
+                }
+                line = file.ReadLine();
+            }
+            return new Tuple<int, int>(dataBytes, lineCount);
         }
 
         public byte getByteFrom2HexChar(string twoHexChars)
         {
             return (byte)Convert.ToInt32(twoHexChars, 16);
         }
-    }
+
+        public int getNeededPadding(int byteCount, int pageSize)
+        {
+            // 1. Find out if pageSize divides byteCount with no remainder.  If so, return 0.
+            // 2. Else, get the number of pages with padding.
+            // 3. Get total bytes with padding.
+            // 4. Find number of padding bytes needed.
+            // 5. Return how many padding bytes are required to make the last page full.
+
+            int numberOfPaddingBytesNeeded = 0;
+
+            if(byteCount % pageSize == 0)
+            {
+                return 0;
+            } else
+            {
+                Decimal approximateNumberOfPages = (byteCount / pageSize);
+                int numberOfPagesWithPadding = (int)Math.Ceiling(approximateNumberOfPages);
+                int totalBytesWithPadding = (int)Math.Floor(approximateNumberOfPages) * pageSize;
+                numberOfPaddingBytesNeeded = byteCount - totalBytesWithPadding;
+            }
+            Console.WriteLine(numberOfPaddingBytesNeeded);
+            return numberOfPaddingBytesNeeded;
+        }
+
+        public int getNeededPagePadding(int byteCount, int pageSize)
+        {
+            // 1. Find out if pageSize divides byteCount with no remainder.  If so, return 0.
+            // 2. Else, get the number of pages with padding.
+            // 3. Get total bytes with padding.
+            // 4. Find number of padding bytes needed.
+            // 5. Return how many padding bytes are required to make the last page full.
+
+            if (byteCount % pageSize == 0)
+            {
+                return 0;
+            }
+            else
+            {
+                return ((int)Math.Floor((float)byteCount/(float)pageSize)+1);
+            }
+            return 0;
+        }
+
+
+    }// End Intel Hex File Class
+
 } // End of Namespace
