@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Reflection;
 using System.Drawing;
 using System.IO;
+using System.Threading;
 
 namespace Lumi_Uploader_for_TinySafeBoot
 {
@@ -153,6 +154,9 @@ namespace Lumi_Uploader_for_TinySafeBoot
 
         private string rxBuffer = "";
 
+        string filePath = "";
+        string fileName = "";
+
         // Firmware date.
         public string firmwareDateString;
         long firmwareDate;
@@ -179,11 +183,29 @@ namespace Lumi_Uploader_for_TinySafeBoot
         #endregion properties
 
 
+
+
         public void init(SerialPortsExtended serialPortMain, RichTextBox mainDisplayMain, ProgressBar mainProgressBar)
         {
             serialPorts = serialPortMain;
             mainDisplay = mainDisplayMain;
             progressBar = mainProgressBar;
+        }
+
+        public void scrollToBottomOfTerminal()
+        {
+            mainDisplay.SelectionStart = mainDisplay.Text.Length;
+            mainDisplay.ScrollToCaret();
+        }
+
+        public void setFilePath(string path)
+        {
+            filePath = path;
+        }
+
+        public void setFileName(string name)
+        {
+            fileName = name;
         }
 
         public string commandString(commands commandNumber)
@@ -215,7 +237,7 @@ namespace Lumi_Uploader_for_TinySafeBoot
             for(int i = 0; i < 3; i++)
             {
                 serialPorts.WriteData("@@@");
-                System.Threading.Thread.Sleep(50);
+                Thread.Sleep(50);
                 rxBuffer = serialPorts.ReadExistingAsString();
                 if(rxBuffer.Length > 0) { break; }
             }
@@ -360,18 +382,16 @@ namespace Lumi_Uploader_for_TinySafeBoot
             System.IO.StreamWriter outputFile = new System.IO.StreamWriter(mydocpath + @"\Flash_Read_Output.hex");
             
             int numberOfPagesRead = (rawFlashRead.Length / pageSize);
-            int[] pageByteArray = new int[pageSize];
             int pageDepth = (pageSize/16);
             const int pageWidth = 16;
             string lineBuffer = "";
 
-            mainDisplay.AppendText("\nFlash readout for DEVICE TYPE\n\n", System.Drawing.Color.White);
+            mainDisplay.AppendText("\nFlash readout for " + deviceSignatureValue + "\n\n", System.Drawing.Color.White);
 
             for(int i = 0; i < numberOfPagesRead; i++)
             {
                 if (displayFlashType != displayFlash.none)
                 { mainDisplay.AppendText("\n\t Page #:" + i + "\n", System.Drawing.Color.Yellow); }
-
                 for (int j = 0; j < pageDepth; j++)
                 {
                     int location = ((i * pageSize) + (j * pageWidth));
@@ -383,6 +403,8 @@ namespace Lumi_Uploader_for_TinySafeBoot
                     lineBuffer = "";
                 }
             }
+
+            scrollToBottomOfTerminal();
             outputFile.Close();
         }
 
@@ -464,9 +486,9 @@ namespace Lumi_Uploader_for_TinySafeBoot
             // 1. Open Intel HEX file.
             // 2. Read file into byte array.
             // 3. Print out the data.
+            // 4. Write data to flash.
 
             intelHexFile intelHexFileHandler = new intelHexFile();
-            string filePath = @"C:\Users\User\Documents\tsb_atmega_test.hex";
             byte[] bytesFromFile = intelHexFileHandler.intelHexFileToArray(filePath, pageSize);
 
             int[] intsFromFile = new int[bytesFromFile.Length];
@@ -475,7 +497,79 @@ namespace Lumi_Uploader_for_TinySafeBoot
                 intsFromFile[i] = bytesFromFile[i];
             }
             parseAndPrintRawRead(intsFromFile);
+            writeDataToFlash(intsFromFile);
 
+        }
+
+        public bool writeDataToFlash(int[] dataToWrite)
+        {
+            // 1. Send Flash write character.
+            // 2. Get response and check for RQ ('?').
+            // 3. Write page of data.
+            // 4. Wait and check for RQ ('?') or CF ('!').
+            // 5. Repeat steps 3-4 until last page.
+            // 6. Write RQ ('?').
+            // 7. Wait and check for CF ('!').
+            // 8. Return true if process successful.
+
+            mainDisplay.AppendText("\n\n\nWrite in progress: \nPlease do not disconnect device or exit the application\n", Color.Yellow);
+            scrollToBottomOfTerminal();
+
+            int pagesToWrite = dataToWrite.Length / pageSize;
+
+            serialPorts.WriteData(commandsAsStrings[(int)commands.writeFlash]);
+            Thread.Sleep(1200);
+
+            string readyForData = serialPorts.ReadExistingAsString();
+
+            if (readyForData.Contains("?"))
+            {
+                for(int i = 0; i < pagesToWrite; i++)
+                {
+                    // From byte array to string
+                    string stringToWrite = getStringFromIntBytes(dataToWrite.Skip(i * pageSize).Take(pageSize).ToArray());
+                    serialPorts.WriteData(commandsAsStrings[(int)commands.confirm]);
+                    Thread.Sleep(100);
+                    serialPorts.WriteData(stringToWrite);
+                    Thread.Sleep(500);
+                    readyForData = serialPorts.ReadExistingAsString();
+                    if (readyForData.Contains("!"))
+                    {
+                        mainDisplay.AppendText("ERROR writing Page #" + i + "\n", Color.Red);
+                        return false;
+                    }
+                    mainDisplay.AppendText("Page #" + i + " ", Color.Yellow); 
+                    mainDisplay.AppendText("OK.\n", Color.LawnGreen);
+                    scrollToBottomOfTerminal();
+                }
+                serialPorts.WriteData(commandsAsStrings[(int)commands.request]);
+                Thread.Sleep(100);
+                readyForData = serialPorts.ReadExistingAsString();
+                if (readyForData.Contains("!"))
+                {
+                    scrollToBottomOfTerminal();
+                    mainDisplay.AppendText("\nThe file ", Color.LawnGreen);
+                    mainDisplay.AppendText(fileName, Color.Yellow);
+                    mainDisplay.AppendText(" was written succesfully!", Color.LawnGreen);
+                    scrollToBottomOfTerminal();
+                    return true;
+                }
+
+            }
+
+            return true;
+        }
+
+        public string getStringFromIntBytes(int[] bytes)
+        {
+
+            string str = "";
+            for(int i = 0; i < bytes.Length; i++)
+            {
+                str += Convert.ToChar(bytes[i]);
+            }
+
+            return str;
         }
 
         public void setTsbConnectionSafely(bool tsbConnection)

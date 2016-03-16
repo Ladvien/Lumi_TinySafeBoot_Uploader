@@ -117,6 +117,7 @@ class SerialPortsExtended: SerialPort
             ComPort.Parity = (Parity)Enum.Parse(typeof(Parity), parity);
             ComPort.WriteTimeout = SerialPort.InfiniteTimeout ;
             ComPort.ReadTimeout = SerialPort.InfiniteTimeout;
+            //ComPort.Encoding = System.Text.Encoding.UTF8;
             try
             {
                 ComPort.Open();

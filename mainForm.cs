@@ -537,5 +537,18 @@ namespace HM_1X_Aid_v01
                 saveSettings();
             }
         }
+
+        private void btnOpenFile_Click(object sender, EventArgs e)
+        {
+            if (ofdHexFile.ShowDialog() == DialogResult.OK) {
+                tsb.setFilePath(ofdHexFile.FileName);
+                tsb.setFileName(ofdHexFile.SafeFileName);
+                rtbHexFilePath.Text = ofdHexFile.FileName;
+                if(ofdHexFile.FileName != null)
+                {
+                    btnWriteHexFile.Enabled = true;
+                }
+            }
+        }
     }
 }
