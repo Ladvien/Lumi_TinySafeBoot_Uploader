@@ -9,6 +9,7 @@ using System.Drawing;
 using System.IO;
 using System.Threading;
 
+
 namespace Lumi_Uploader_for_TinySafeBoot
 {
     class tsb
@@ -512,8 +513,10 @@ namespace Lumi_Uploader_for_TinySafeBoot
             // 7. Wait and check for CF ('!').
             // 8. Return true if process successful.
 
-            mainDisplay.AppendText("\n\n\nWrite in progress: \nPlease do not disconnect device or exit the application\n", Color.Yellow);
+            mainDisplay.AppendText("\n\n\nWrite in progress: \nPlease do not disconnect device or exit the application.\n", Color.Yellow);
             scrollToBottomOfTerminal();
+
+
 
             int pagesToWrite = dataToWrite.Length / pageSize;
 
@@ -627,7 +630,7 @@ namespace Lumi_Uploader_for_TinySafeBoot
 
                 // Read.
                 StreamReader fileStream = new StreamReader(fileName);
-                byte[] bytesThisLine = new byte[16];
+
                 Tuple<byte[], Int16> lineOfDataAndAddress = new Tuple<byte[], Int16>(null, 0);
                 int indexOfLastDataLine = 0;
 
@@ -640,7 +643,7 @@ namespace Lumi_Uploader_for_TinySafeBoot
                     if (lineOfDataAndAddress.Item1 != null)
                     {
                         Int16 startAddressOfLine = lineOfDataAndAddress.Item2;
-                        for (int byteIndex = 0; byteIndex < 16; byteIndex++)
+                        for (int byteIndex = 0; byteIndex < lineOfDataAndAddress.Item1.Length; byteIndex++)
                         {
                             if ((byteIndex + lineIndex * 16) < numberOfBytesInFile)
                             { dataFromFile[byteIndex + startAddressOfLine] = lineOfDataAndAddress.Item1[byteIndex]; }

@@ -96,7 +96,6 @@
             this.btnOpenFile = new System.Windows.Forms.Button();
             this.btnWriteHexFile = new System.Windows.Forms.Button();
             this.btnReadHexFile = new System.Windows.Forms.Button();
-            this.cmbChip = new System.Windows.Forms.ComboBox();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.btnSend = new System.Windows.Forms.Button();
             this.txbSendTextBox = new System.Windows.Forms.TextBox();
@@ -720,14 +719,13 @@
             this.ltbTSB.ColumnCount = 3;
             this.ltbTSB.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 31.61222F));
             this.ltbTSB.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 68.38778F));
-            this.ltbTSB.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 385F));
+            this.ltbTSB.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 387F));
             this.ltbTSB.Controls.Add(this.label9, 0, 2);
             this.ltbTSB.Controls.Add(this.label10, 0, 1);
             this.ltbTSB.Controls.Add(this.rtbHexFilePath, 1, 1);
             this.ltbTSB.Controls.Add(this.btnOpenFile, 1, 0);
-            this.ltbTSB.Controls.Add(this.btnWriteHexFile, 1, 3);
-            this.ltbTSB.Controls.Add(this.btnReadHexFile, 2, 3);
-            this.ltbTSB.Controls.Add(this.cmbChip, 1, 2);
+            this.ltbTSB.Controls.Add(this.btnWriteHexFile, 3, 1);
+            this.ltbTSB.Controls.Add(this.btnReadHexFile, 3, 0);
             this.ltbTSB.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ltbTSB.Location = new System.Drawing.Point(3, 3);
             this.ltbTSB.Name = "ltbTSB";
@@ -745,7 +743,7 @@
             this.label9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label9.Location = new System.Drawing.Point(3, 80);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(172, 40);
+            this.label9.Size = new System.Drawing.Size(171, 40);
             this.label9.TabIndex = 6;
             this.label9.Text = "Chip:";
             this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -756,7 +754,7 @@
             this.label10.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label10.Location = new System.Drawing.Point(3, 40);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(172, 40);
+            this.label10.Size = new System.Drawing.Size(171, 40);
             this.label10.TabIndex = 5;
             this.label10.Text = "Hex File Path:";
             this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -766,21 +764,21 @@
             this.rtbHexFilePath.DetectUrls = false;
             this.rtbHexFilePath.Dock = System.Windows.Forms.DockStyle.Fill;
             this.rtbHexFilePath.ForeColor = System.Drawing.SystemColors.MenuText;
-            this.rtbHexFilePath.Location = new System.Drawing.Point(181, 43);
+            this.rtbHexFilePath.Location = new System.Drawing.Point(180, 43);
             this.rtbHexFilePath.Multiline = false;
             this.rtbHexFilePath.Name = "rtbHexFilePath";
             this.rtbHexFilePath.ReadOnly = true;
             this.rtbHexFilePath.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
-            this.rtbHexFilePath.Size = new System.Drawing.Size(379, 34);
+            this.rtbHexFilePath.Size = new System.Drawing.Size(378, 34);
             this.rtbHexFilePath.TabIndex = 2;
             this.rtbHexFilePath.Text = "None";
             // 
             // btnOpenFile
             // 
             this.btnOpenFile.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnOpenFile.Location = new System.Drawing.Point(181, 3);
+            this.btnOpenFile.Location = new System.Drawing.Point(180, 3);
             this.btnOpenFile.Name = "btnOpenFile";
-            this.btnOpenFile.Size = new System.Drawing.Size(379, 34);
+            this.btnOpenFile.Size = new System.Drawing.Size(378, 34);
             this.btnOpenFile.TabIndex = 3;
             this.btnOpenFile.Text = "Open Hex File";
             this.btnOpenFile.UseVisualStyleBackColor = true;
@@ -792,9 +790,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btnWriteHexFile.Enabled = false;
-            this.btnWriteHexFile.Location = new System.Drawing.Point(181, 123);
+            this.btnWriteHexFile.Location = new System.Drawing.Point(564, 43);
             this.btnWriteHexFile.Name = "btnWriteHexFile";
-            this.btnWriteHexFile.Size = new System.Drawing.Size(379, 36);
+            this.btnWriteHexFile.Size = new System.Drawing.Size(382, 34);
             this.btnWriteHexFile.TabIndex = 1;
             this.btnWriteHexFile.Text = "Write File";
             this.btnWriteHexFile.UseVisualStyleBackColor = true;
@@ -805,23 +803,13 @@
             this.btnReadHexFile.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnReadHexFile.Location = new System.Drawing.Point(566, 123);
+            this.btnReadHexFile.Location = new System.Drawing.Point(564, 3);
             this.btnReadHexFile.Name = "btnReadHexFile";
-            this.btnReadHexFile.Size = new System.Drawing.Size(380, 36);
+            this.btnReadHexFile.Size = new System.Drawing.Size(382, 34);
             this.btnReadHexFile.TabIndex = 4;
             this.btnReadHexFile.Text = "Read File";
             this.btnReadHexFile.UseVisualStyleBackColor = true;
             this.btnReadHexFile.Click += new System.EventHandler(this.btnReadHexFile_Click);
-            // 
-            // cmbChip
-            // 
-            this.cmbChip.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cmbChip.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbChip.FormattingEnabled = true;
-            this.cmbChip.Location = new System.Drawing.Point(181, 83);
-            this.cmbChip.Name = "cmbChip";
-            this.cmbChip.Size = new System.Drawing.Size(379, 28);
-            this.cmbChip.TabIndex = 7;
             // 
             // tableLayoutPanel4
             // 
@@ -1150,7 +1138,6 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Button btnOpenFile;
         private System.Windows.Forms.Button btnReadHexFile;
-        private System.Windows.Forms.ComboBox cmbChip;
         private System.Windows.Forms.Label lblTSB;
         private System.Windows.Forms.Button btnConnectToTSB;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
