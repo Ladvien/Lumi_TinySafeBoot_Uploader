@@ -235,7 +235,13 @@ namespace Lumi_Uploader_for_TinySafeBoot
             int[] freeFlash = { 0x00, 0x00 };
             int[] eepromSize = { 0x00, 0x00 };
 
-            for(int i = 0; i < 3; i++)
+            serialPorts.WriteData("AT+PIOB0");
+            Thread.Sleep(120);
+            serialPorts.WriteData("AT+PIOB1");
+            Thread.Sleep(120);
+
+
+            for (int i = 0; i < 3; i++)
             {
                 serialPorts.WriteData("@@@");
                 Thread.Sleep(50);
@@ -532,9 +538,9 @@ namespace Lumi_Uploader_for_TinySafeBoot
                     // From byte array to string
                     string stringToWrite = getStringFromIntBytes(dataToWrite.Skip(i * pageSize).Take(pageSize).ToArray());
                     serialPorts.WriteData(commandsAsStrings[(int)commands.confirm]);
-                    Thread.Sleep(100);
+                    Thread.Sleep(120);
                     serialPorts.WriteData(stringToWrite);
-                    Thread.Sleep(500);
+                    Thread.Sleep(180);
                     readyForData = serialPorts.ReadExistingAsString();
                     if (readyForData.Contains("!"))
                     {
@@ -796,7 +802,7 @@ namespace Lumi_Uploader_for_TinySafeBoot
 
             if (byteCount % pageSize == 0)
             {
-                return 0;
+                return ((int)(byteCount / pageSize)+1);
             }
             else
             {
